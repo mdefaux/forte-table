@@ -1,0 +1,26 @@
+{
+  "name": "forte-table",
+  "version": "1.0.0",
+  "description": "A React table management library from Forte.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdefaux/forte-table.git"
+  },
+  "keywords": [
+    "Table",
+    "Forte",
+    "React",
+    "gui",
+    "design"
+  ],
+  "author": "Maurice Defaux",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mdefaux/forte-table/issues"
+  },
+  "homepage": "https://github.com/mdefaux/forte-table#readme"
+}
