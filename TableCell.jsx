@@ -4,7 +4,7 @@ class TableCell extends React.Component {
   state = {
     input: false,
     tempContent: null,  // TODO: handle edit mode
-    // isValid: true, // TODO: handle valid value
+    isValid: true, // TODO: handle valid value
   };
 
   cellController = null;
@@ -48,7 +48,7 @@ class TableCell extends React.Component {
 
     let content = " ";
     if( this.props.cellRender )
-      content = this.props.cellRender( this.props.row, this.props.column, this.props.model );
+      content = this.props.cellRender( this.props.row, this.props.column, this.props.model, this );
 
     return (
       <div
