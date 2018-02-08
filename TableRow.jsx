@@ -81,6 +81,12 @@ class TableRow extends React.Component {
           rowId={this.props.rowId}
           activeRow={this.props.isActive}
           setActiveRow={this.setActiveRow}
+          onCellClick={this.props.onCellClick}
+          onCellDoubleClick={this.props.onCellDoubleClick}
+          onCellMouseDown={this.props.onCellMouseDown}
+          onCellMouseMove={this.props.onCellMouseMove}
+          onCellMouseUp={this.props.onCellMouseUp}
+
           type={this.props.type ? this.props.type : "small"}
 
           model={this.props.model}

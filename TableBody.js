@@ -59,6 +59,13 @@ class TableBody extends React.Component {
           columns={this.props.columns}
           cellRender={this.props.cellRender}
           headers={this.props.headers}
+
+          onCellClick={this.props.onCellClick}
+          onCellDoubleClick={this.props.onCellDoubleClick}
+          onCellMouseDown={this.props.onCellMouseDown}
+          onCellMouseMove={this.props.onCellMouseMove}
+          onCellMouseUp={this.props.onCellMouseUp}
+
           // getDataList={this.props.getDataList}
           model={this.props.model}
           view={this.props.view}

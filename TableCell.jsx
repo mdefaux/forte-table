@@ -5,6 +5,7 @@ class TableCell extends React.Component {
     input: false,
     tempContent: null,  // TODO: handle edit mode
     isValid: true, // TODO: handle valid value
+    isSelected: false
   };
 
   cellController = null;
@@ -39,6 +40,28 @@ class TableCell extends React.Component {
   };
   */
 
+  onClick =(e) => {
+    if( this.props.onCellClick )
+      this.props.onCellClick( e, this.props.column, this.props.row, this.props.model, this );
+  };
+  onDoubleClick =(e) => {
+    if( this.props.onCellDoubleClick )
+      this.props.onCellDoubleClick( e, this.props.column, this.props.row, this.props.model, this );
+  };
+  onMouseDown = (e) => {
+    if( this.props.onCellMouseDown )
+      this.props.onCellMouseDown( e, this.props.column, this.props.row, this.props.model, this );
+  };
+  onMouseMove = (e) => {
+    if( this.props.onCellMouseMove )
+      this.props.onCellMouseMove( e, this.props.column, this.props.row, this.props.model, this );
+  };
+  onMouseUp = (e) => {
+    if( this.props.onCellMouseUp )
+      this.props.onCellMouseUp( e, this.props.column, this.props.row, this.props.model, this );
+  };
+
+
   render() {
 
     // let content = this.state.tempContent ? this.state.tempContent : this.props.value;
@@ -48,7 +71,7 @@ class TableCell extends React.Component {
 
     let content = " ";
     if( this.props.cellRender )
-      content = this.props.cellRender( this.props.row, this.props.column, this.props.model, this );
+      content = this.props.cellRender( this.props.column, this.props.row, this.props.model, this );
 
     return (
       <div
@@ -59,6 +82,11 @@ class TableCell extends React.Component {
         //   this.props.fieldModel.mandatory,
         //   this.props.fieldModel.readonly
         // )}
+        onClick={this.onClick}
+        onDoubleClick={this.onDoubleClick}
+        onMouseDown={this.onMouseDown}
+        onMouseMove={this.onMouseMove}
+        onMouseUp={this.onMouseUp}
       >
           {content}
       </div>

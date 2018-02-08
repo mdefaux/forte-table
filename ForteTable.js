@@ -69,6 +69,11 @@ class ForteTable extends React.Component {
         tableController={this.state.tableController}
         getTableController={this.props.getTableController}
         type={this.props.type ? this.props.type : "small"}
+        onCellClick={this.props.onCellClick}
+        onCellDoubleClick={this.props.onCellDoubleClick}
+        onCellMouseDown={this.props.onCellMouseDown}
+        onCellMouseMove={this.props.onCellMouseMove}
+        onCellMouseUp={this.props.onCellMouseUp}
       />
     );
     const tableFooter = "";
