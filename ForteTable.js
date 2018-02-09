@@ -37,7 +37,7 @@ class ForteTable extends React.Component {
   componentDidUpdate() {}
 
 
-  setActiveRow = (rowId, tableName, rowIndex) => {
+  setActiveRow = (rowId, rowIndex) => {
     this.activeRowId = rowId;
     this.rowIndex = rowIndex;
   };
@@ -69,6 +69,7 @@ class ForteTable extends React.Component {
         tableController={this.state.tableController}
         getTableController={this.props.getTableController}
         type={this.props.type ? this.props.type : "small"}
+        setActiveRow={this.setActiveRow}
         onCellClick={this.props.onCellClick}
         onCellDoubleClick={this.props.onCellDoubleClick}
         onCellMouseDown={this.props.onCellMouseDown}
