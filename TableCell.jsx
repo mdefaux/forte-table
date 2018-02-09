@@ -68,6 +68,10 @@ class TableCell extends React.Component {
 
     // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.props.controller.getCellContent( this.props.column, this.props.row, this );
     // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.getController().getContent( this.props.column, this.props.row, this );
+    if( this.state.input )
+    {
+      return this.getController().getContent( this.props.column, this.props.row, this );
+    }
 
     let content = " ";
     if( this.props.cellRender )
@@ -75,7 +79,11 @@ class TableCell extends React.Component {
 
     return (
       <div
-        className="ft-cell--container"
+        className={
+          this.state.isSelected
+            ? "ft-cell--container__active"
+            : "ft-cell--container"
+        }
         // style={styles.handleValidation(
         //   this.state.isValid,
         //   this.props.activeRow,
