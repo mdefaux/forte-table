@@ -53,10 +53,9 @@ class TableBody extends React.Component {
           onCellMouseDown={this.props.onCellMouseDown}
           onCellMouseMove={this.props.onCellMouseMove}
           onCellMouseUp={this.props.onCellMouseUp}
+          onCellKeyDown={this.props.onCellKeyDown}
+          onCellKeyUp={this.props.onCellKeyUp}
 
-          model={this.props.model}
-          view={this.props.view}
-          store={this.props.store}
           type={this.props.type}
           hover={this.props.hover}
           reload={this.props.reload}

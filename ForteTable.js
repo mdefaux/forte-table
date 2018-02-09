@@ -19,9 +19,8 @@ class ForteTable extends React.Component {
     super(props);
 
     if (props.createController)
-      // if there is a controller maker
+      // if there is a controller maker, call it
       this.state.tableController = props.createController(this);
-    console.log(this.state.tableController);
   }
 
   /** On initializing query the data store and sets table in loading state.
@@ -36,7 +35,11 @@ class ForteTable extends React.Component {
    */
   componentDidUpdate() {}
 
-
+  /**Sets a row as active. Memorizes the row index and eventually the row id.
+   *
+   * @param rowId
+   * @param rowIndex
+   */
   setActiveRow = (rowId, rowIndex) => {
     this.activeRowId = rowId;
     this.rowIndex = rowIndex;
@@ -75,6 +78,8 @@ class ForteTable extends React.Component {
         onCellMouseDown={this.props.onCellMouseDown}
         onCellMouseMove={this.props.onCellMouseMove}
         onCellMouseUp={this.props.onCellMouseUp}
+        onCellKeyDown={this.props.onCellKeyDown}
+        onCellKeyUp={this.props.onCellKeyUp}
       />
     );
     const tableFooter = "";

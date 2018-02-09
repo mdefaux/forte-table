@@ -60,6 +60,18 @@ class TableCell extends React.Component {
     if( this.props.onCellMouseUp )
       this.props.onCellMouseUp( e, this.props.column, this.props.row, this.props.model, this );
   };
+  onKeyDown = (evt) => {
+    evt = evt || window.event;
+    // console.log( evt.which );
+    if( this.props.onCellKeyDown )
+      this.props.onCellKeyDown( evt, this.props.column, this.props.row, this.props.model, this );
+  };
+  onKeyUp = (evt) => {
+    evt = evt || window.event;
+    console.log( evt.which );
+    if( this.props.onCellKeyUp )
+      this.props.onCellKeyUp( evt, this.props.column, this.props.row, this.props.model, this );
+  };
 
 
   render() {
@@ -84,6 +96,7 @@ class TableCell extends React.Component {
             ? "ft-cell--container__active"
             : "ft-cell--container"
         }
+        tabIndex={1}
         // style={styles.handleValidation(
         //   this.state.isValid,
         //   this.props.activeRow,
@@ -95,6 +108,8 @@ class TableCell extends React.Component {
         onMouseDown={this.onMouseDown}
         onMouseMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}
+        onKeyDown={this.onKeyDown}
+        onKeyUp={this.onKeyUp}
       >
           {content}
       </div>

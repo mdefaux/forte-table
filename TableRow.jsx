@@ -86,6 +86,8 @@ class TableRow extends React.Component {
           onCellMouseDown={this.props.onCellMouseDown}
           onCellMouseMove={this.props.onCellMouseMove}
           onCellMouseUp={this.props.onCellMouseUp}
+          onCellKeyDown={this.props.onCellKeyDown}
+          onCellKeyUp={this.props.onCellKeyUp}
 
           type={this.props.type ? this.props.type : "small"}
 
