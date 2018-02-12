@@ -68,7 +68,11 @@ class TableRow extends React.Component {
    * @returns {XML}
    */
   render() {
-    const row = this.props.row; // this.getRecord();
+    let row;
+    if( this.hasController() )
+      row = this.getController().getRecord();
+    else
+      row = this.props.row; // this.getRecord();
     const columns = this.props.columns();
     const cells = columns.map(( /*headerModel*/ column, index) => {
       // for each column in the view

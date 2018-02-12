@@ -80,7 +80,7 @@ class TableCell extends React.Component {
 
     // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.props.controller.getCellContent( this.props.column, this.props.row, this );
     // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.getController().getContent( this.props.column, this.props.row, this );
-    if( this.state.input )
+    if( this.hasController() )
     {
       return this.getController().getContent( this.props.column, this.props.row, this );
     }
