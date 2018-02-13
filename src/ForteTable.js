@@ -58,7 +58,8 @@ class ForteTable extends React.Component {
       <TableHeader
         columns={this.props.columns}
         headColRender={this.props.headColRender}
-        changeSortColumn={this.changeSortColumn}
+        onColumnHeaderClick={this.props.onColumnHeaderClick || ((index)=>{}) }
+        // changeSortColumn={this.changeSortColumn}
         sorting={this.state.sorting}
         loggedUser={this.props.loggedUser}
       />

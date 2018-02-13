@@ -11,6 +11,7 @@ class TableHeader extends React.Component {
         index={index}
         headColRender={this.props.headColRender}
         column={col}
+        onColumnHeaderClick={this.props.onColumnHeaderClick}
         // changeSortColumn={this.props.changeSortColumn}
         // sorting={this.props.sorting}
       />

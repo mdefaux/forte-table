@@ -28,7 +28,7 @@ class ColumnHeader extends React.Component {
       <div
         className="ft-table--cell__header"
         onClick={() => {
-          this.props.changeSortColumn(this.props.index);
+          this.props.onColumnHeaderClick(this.props.index);
         }}
         onMouseEnter={this.toggleHover}
         onMouseLeave={this.toggleHover}
