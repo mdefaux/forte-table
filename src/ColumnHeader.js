@@ -1,5 +1,5 @@
 import React from "react";
-import "./styles/column-header-style.css";
+import "../styles/column-header-style.css";
 
 class ColumnHeader extends React.Component {
   state = {

@@ -1,4 +1,5 @@
 import React from 'react';
+import cellStyles from "../styles/table-cell-styles";
 
 class TableCell extends React.Component {
   state = {

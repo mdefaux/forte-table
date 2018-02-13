@@ -1,4 +1,4 @@
-import ForteTable from './ForteTable'
+import ForteTable from './src/ForteTable'
 
 export {
   ForteTable

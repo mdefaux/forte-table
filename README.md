@@ -8,6 +8,8 @@ A React table management library.
 # Examples
 ## Base Example
 
-https://codesandbox.io/s/m4myn2lqj
+https://codesandbox.io/s/y36qjmvp4v
 
+
+https://codesandbox.io/s/m4myn2lqj
 

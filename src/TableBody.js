@@ -1,6 +1,6 @@
 import React from "react";
 import TableRow from "./TableRow";
-import styles from "./styles/table-body-styles";
+import styles from "../styles/table-body-styles";
 
 class TableBody extends React.Component {
   state = {

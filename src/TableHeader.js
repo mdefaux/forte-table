@@ -1,7 +1,7 @@
 import React from "react";
 import ColumnHeader from "./ColumnHeader";
 
-import "./styles/table-header.css";
+import "../styles/table-header.css";
 
 class TableHeader extends React.Component {
   render() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import TableCell from './TableCell';
-import styles from './styles/table-row-styles';
+import styles from '../styles/table-row-styles';
 
 /**
  * TableRow
