@@ -1,55 +1,45 @@
-.ft-cell--container {
+.ft-cell__container {
   display: table-cell;
-  border: 1px solid #dde1e3;
-  /* border-top: 1px solid #dde1e3;
-  border-left: 1px solid #dde1e3; */
+  position: relative;
   padding-left: 4px;
   min-width: 150px;
   max-width: 150px;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
   box-sizing: border-box;
-  vertical-Align: middle;
-  position: relative;
+  vertical-align: middle;
+  cursor: default;
+  transition: all 0.1s ease;
 }
 
-.ft-cell--container__active {
-  display: table-cell;
-  min-width: 149px;
-  max-width: 149px;
+.ft-cell__container:focus {
+  outline: none;
+}
+
+.ft-cell__container--normal {
+  border: 1px solid #dde1e3;
+}
+
+.ft-cell__container--active {
+  border: 1px double #108ee9;
+  min-width: 150px;
+  max-width: 150px;
   margin-left: -1px;
-  /*border: 2px solid #108EE9;*/
-  /* box-shadow: 0 0 0 1px #108EE9; */
-  /* border-radius: 1px; */
-  border: 1px double #108EE9;
-  /* border-bottom-style: hidden; */
-  /* box-sizing: border-box; */
-  vertical-Align: middle;
   position: relative;
-  /* transition: box-shadow .2s ease-in-out; */
-  /* box-sizing: border-box; */
 }
 
-/* .ft-cell--container__active::after {
-  content: "";
-  position: absolute;
-  width: 150px;
-  height: 89px;
-  /* background: red; */
-  /* box-shadow: 0px 1px 5px grey;
-  z-index: 0; */
-  /* left: 1px;
-} */
-
-.ft-cell--content__normal {
-  padding-left: 4px;
+.ft-cell__content--normal {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 
-.ft-cell--content__active-readonly {
+.ft-cell__content--normal:focus {
+  outline: none;
+}
+
+.ft-cell__content--active--readonly {
   padding: 4px;
   color: #919191;
   background-color: #eeeeee;
@@ -57,14 +47,14 @@
   width: 150px;
   height: 29px;
 }
-.ft-cell--content__notvalid-mandatory {
+.ft-cell__content--notvalid--mandatory {
   color: #f04134;
 }
-.ft-cell--content__notvalid {
+.ft-cell__content--notvalid {
   color: #f04134;
 }
 
-.ft-cell--icon__mandatory {
+.ft-cell__icon--mandatory {
   position: absolute;
   right: 0;
   top: -2px;
@@ -72,7 +62,7 @@
   font-size: 12px;
 }
 
-.ft-cell--icon__error {
+.ft-cell__icon--error {
   position: absolute;
   right: 1px;
   bottom: -1px;
