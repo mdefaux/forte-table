@@ -28,6 +28,14 @@ class TableCell extends React.Component {
     //this.cellController = this.props.rowController.createCellController( this, this.props.row, this.props.column );
   }
 
+  setSelected = ( toBeSelected ) => {
+    this.setState({ isSelected: toBeSelected });
+    if( toBeSelected )
+    {
+      this.props.setActiveRow();
+    }
+  };
+
   /*
   handleKey = (evt) => {
     evt = evt || window.event;
@@ -124,7 +132,7 @@ class TableCell extends React.Component {
 
     // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.props.controller.getCellContent( this.props.column, this.props.row, this );
     // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.getController().getContent( this.props.column, this.props.row, this );
-    if (this.hasController()) {
+    if (this.hasController() && this.state.input) {
       return this.getController().getContent(
         this.props.column,
         this.props.row,
