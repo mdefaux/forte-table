@@ -19,7 +19,7 @@ class ForteTable extends React.Component {
     super(props);
 
     if (props.createController)
-      // if there is a controller maker, call it
+      // if there is a controller factory, call it
       this.state.tableController = props.createController(this);
   }
 
@@ -27,7 +27,6 @@ class ForteTable extends React.Component {
    *
    */
   componentWillMount() {
-    // this.loadFromServer();
   }
 
   /** Checks if new row is to be rendered

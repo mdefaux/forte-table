@@ -1,5 +1,4 @@
 import React from 'react';
-// import styles from '../styles/table-cell-styles';
 import '../styles/table-cell.css';
 
 class TableCell extends React.Component {
@@ -25,7 +24,6 @@ class TableCell extends React.Component {
   };
 
   componentWillMount() {
-    //this.cellController = this.props.rowController.createCellController( this, this.props.row, this.props.column );
   }
 
   setSelected = ( toBeSelected ) => {
@@ -35,22 +33,6 @@ class TableCell extends React.Component {
       this.props.setActiveRow();
     }
   };
-
-  /*
-  handleKey = (evt) => {
-    evt = evt || window.event;
-    if (evt.keyCode === 27) {
-      // Esc key pressed.
-      this.setState({
-        input: false,
-        tempContent: this.props.value,
-      });
-    } else if (evt.keyCode === 13) {
-      // Enter key pressed
-      this.handleSave();
-    }
-  };
-  */
 
   onClick = e => {
     if (this.props.onCellClick)
@@ -104,7 +86,6 @@ class TableCell extends React.Component {
   };
   onKeyDown = evt => {
     evt = evt || window.event;
-    // console.log( evt.which );
     if (this.props.onCellKeyDown)
       this.props.onCellKeyDown(
         evt,
@@ -128,10 +109,6 @@ class TableCell extends React.Component {
   };
 
   render() {
-    // let content = this.state.tempContent ? this.state.tempContent : this.props.value;
-
-    // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.props.controller.getCellContent( this.props.column, this.props.row, this );
-    // let content = /*this.state.tempContent ? this.state.tempContent :*/ this.getController().getContent( this.props.column, this.props.row, this );
     if (this.hasController() && this.state.input) {
       return this.getController().getContent(
         this.props.column,
@@ -179,8 +156,6 @@ class TableCell extends React.Component {
         {content}
       </div>
     );
-
-    // return (content);
   }
 }
 
