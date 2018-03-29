@@ -80,6 +80,8 @@ class ForteTable extends React.Component {
         onCellMouseUp={this.props.onCellMouseUp}
         onCellKeyDown={this.props.onCellKeyDown}
         onCellKeyUp={this.props.onCellKeyUp}
+
+        newRow={this.props.newRow}
       />
     );
     const tableFooter = "";
