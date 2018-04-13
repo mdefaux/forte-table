@@ -33,6 +33,8 @@ class TableBody extends React.Component {
         isActive = true;
       }
 
+      debugger;
+
       return (
         <TableRow
           isActive={isActive}
@@ -65,6 +67,7 @@ class TableBody extends React.Component {
       );
     });
 
+    /*
     if (this.props.newRow) {
       let newIsActive = false;
       if (this.state.activeRow === -1) {
@@ -72,29 +75,54 @@ class TableBody extends React.Component {
       }
       let newRow = (
         <TableRow
-          tableModel={this.props.tableModel}
-          setActiveRow={this.setActiveRow}
+          // tableModel={this.props.tableModel}
           isActive={newIsActive}
           saveData={this.props.saveData}
           key={-1}
           rowId={-1}
           index={rowIndexes.length}
+
+
+          tableController={this.props.tableController}
+          getTableController={this.props.getTableController}
+          // row={dataRecord}
+          columns={this.props.columns}
+          cellRender={this.props.cellRender}
           headers={this.props.headers}
-          model={this.props.model}
-          view={this.props.view}
-          store={this.props.store}
+          setActiveRow={this.setActiveRow}
+
+          onCellClick={this.props.onCellClick}
+          onCellDoubleClick={this.props.onCellDoubleClick}
+          onCellMouseDown={this.props.onCellMouseDown}
+          onCellMouseMove={this.props.onCellMouseMove}
+          onCellMouseUp={this.props.onCellMouseUp}
+          onCellKeyDown={this.props.onCellKeyDown}
+          onCellKeyUp={this.props.onCellKeyUp}
+
           type={this.props.type}
           hover={this.props.hover}
-          newRow={true}
           reload={this.props.reload}
+          checkNewRow={this.props.newRow}
+          loggedUser={this.props.loggedUser}
+
+
+
+          // model={this.props.model}
+          // view={this.props.view}
+          // store={this.props.store}
+          // type={this.props.type}
+          // hover={this.props.hover}
+          newRow={true}
+          // reload={this.props.reload}
           ref={input => {
             this.newRowElement = input;
           }}
-          loggedUser={this.props.loggedUser}
+          // loggedUser={this.props.loggedUser}
         />
       );
       rows.push(newRow);
     }
+    */
     return <div style={styles.root}>{rows}</div>;
   }
 }
