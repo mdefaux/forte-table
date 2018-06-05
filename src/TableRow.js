@@ -63,6 +63,37 @@ class TableRow extends React.Component {
     this.props.setActiveRow(rowId, this.props.index);
   };
 
+  headRowRender( row ) {
+    return (
+      <div
+        style={{
+          // visibility: this.props.isActive ? 'visible' : 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minWidth: '29px',
+          height: styles.selectHeight(this.props.type),
+          borderLeft:
+            this.props.isActive && !this.props.newRow
+              ? '3px solid #108ee9'
+              : this.props.newRow ? '3px solid #00a854' : '',
+        }}
+      >
+        {this.state.id === -1 && !this.state.valid ? (
+          ''
+        ) : this.state.id === -1 && this.state.valid ? (
+          <span style={{ color: '#f04134' }}>&#10006;</span>
+        ) : !this.state.isValid ? (
+          <span style={{ color: '#f04134' }}>&#10006;</span>
+        ) : this.state.isValid && this.props.isActive ? (
+          <span style={{ color: '#00a854' }}>&#10003;</span>
+        ) : (
+          <span />
+        )}
+      </div>
+    );
+  }
+
   /** Renders component
    *
    * @returns {XML}
@@ -106,6 +137,8 @@ class TableRow extends React.Component {
 
     });
 
+    const headRow = this.props.headRowRender? this.props.headRowRender(row) : this.headRowRender(row);
+
     return (
       <div
         style={{
@@ -124,33 +157,7 @@ class TableRow extends React.Component {
         // onMouseEnter={this.props.hover ? this.handleRowHover : ""}
         // onMouseLeave={this.props.hover ? this.handleRowHover : ""}
       >
-        <div
-          style={{
-            // visibility: this.props.isActive ? 'visible' : 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: '29px',
-            height: styles.selectHeight(this.props.type),
-            borderLeft:
-              this.props.isActive && !this.props.newRow
-                ? '3px solid #108ee9'
-                : this.props.newRow ? '3px solid #00a854' : '',
-          }}
-        >
-          {this.state.id === -1 && !this.state.valid ? (
-            ''
-          ) : this.state.id === -1 && this.state.valid ? (
-            <span style={{ color: '#f04134' }}>&#10006;</span>
-          ) : !this.state.isValid ? (
-            <span style={{ color: '#f04134' }}>&#10006;</span>
-          ) : this.state.isValid && this.props.isActive ? (
-            <span style={{ color: '#00a854' }}>&#10003;</span>
-          ) : (
-            <span />
-          )}
-        </div>
-
+        {headRow}
         {cells}
       </div>
     );

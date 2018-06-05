@@ -47,6 +47,7 @@ class TableBody extends React.Component {
           row={dataRecord}
           columns={this.props.columns}
           cellRender={this.props.cellRender}
+          headRowRender={this.props.headRowRender}
           headers={this.props.headers}
           setActiveRow={this.setActiveRow}
 
