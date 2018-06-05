@@ -33,7 +33,7 @@ class TableBody extends React.Component {
         isActive = true;
       }
 
-      debugger;
+      // debugger;
 
       return (
         <TableRow
