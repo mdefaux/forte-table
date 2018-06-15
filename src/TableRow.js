@@ -100,10 +100,10 @@ class TableRow extends React.Component {
    */
   render() {
     let row;
-    if( this.hasController() )
-      row = this.getController().getRecord();
-    else
-      row = this.props.row; // this.getRecord();
+    // if( this.hasController() )                 // gets the record from controller
+    //   row = this.getController().getRecord();
+    // else
+    row = this.props.row; // this.getRecord();
 
     if( row._subscribe )
     {
