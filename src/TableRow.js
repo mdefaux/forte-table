@@ -138,6 +138,7 @@ class TableRow extends React.Component {
           column={column}
           row={row}
           cellRender={this.props.cellRender}
+          cellStyle={this.props.cellStyle}
           getRowController={this.getController}
 
         />

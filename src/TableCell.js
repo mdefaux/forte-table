@@ -108,6 +108,19 @@ class TableCell extends React.Component {
       );
   };
 
+  getStyle() {
+    if( this.props.cellStyle )
+      return this.props.cellStyle(
+        this.props.column,
+        this.props.row,
+        this
+      );
+
+    return this.state.isSelected ?
+        'ft-cell__container ft-cell__container--active'
+        : 'ft-cell__container ft-cell__container--normal';
+  };
+
   render() {
     if (this.hasController() && this.state.input) {
       return this.getController().getContent(
@@ -128,11 +141,7 @@ class TableCell extends React.Component {
 
     return (
       <div
-        className={
-          this.state.isSelected
-            ? 'ft-cell__container ft-cell__container--active'
-            : 'ft-cell__container ft-cell__container--normal'
-        }
+        className={ this.getStyle() }
         // style={
         //   this.state.isSelected
         //     ? styles.container__active()
