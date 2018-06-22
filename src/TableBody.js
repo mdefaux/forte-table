@@ -3,13 +3,17 @@ import TableRow from "./TableRow";
 import styles from "../styles/table-body-styles";
 
 class TableBody extends React.Component {
-  state = {
-    activeRow: -20,
-    range: {
-      start: false,
-      end: false
-    }
-  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeRow: -20,
+      range: {
+        start: false,
+        end: false
+      }
+    };
+  }
 
   componentWillReceiveProps(update) {
     if (update.activeRowId === -1) {

@@ -8,15 +8,13 @@ import TableBody from "./TableBody";
  *
  */
 class ForteTable extends React.Component {
-  state = {
-  };
-
-  activeRowId = null;
-  rowIndex = null;
 
 
   constructor(props) {
     super(props);
+
+    this.activeRowId = null;
+    this.rowIndex = null;
 
     if (props.createController)
       // if there is a controller factory, call it
