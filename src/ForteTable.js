@@ -13,8 +13,8 @@ class ForteTable extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-    };
+    this.state = {};
+
     this.activeRowId = null;
     this.rowIndex = null;
 

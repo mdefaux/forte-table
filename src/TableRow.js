@@ -110,7 +110,7 @@ class TableRow extends React.Component {
       row._subscribe( this );
     }
     // debugger;
-    row = row._getData();
+    // row = row._getData();
 
     const columns = this.props.columns();
     const cells = columns.map(( /*headerModel*/ column, index) => {
