@@ -110,7 +110,7 @@ class TableRow extends React.Component {
       row._subscribe( this );
     }
     // debugger;
-    // row = row._getData();
+    let rowData = row._getData();
 
     const columns = this.props.columns();
     const cells = columns.map(( /*headerModel*/ column, index) => {
@@ -136,7 +136,7 @@ class TableRow extends React.Component {
 
           model={this.props.model}
           column={column}
-          row={row}
+          row={rowData}
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           getRowController={this.getController}
@@ -146,7 +146,7 @@ class TableRow extends React.Component {
 
     });
 
-    const headRow = this.props.headRowRender? this.props.headRowRender(row) : this.headRowRender(row);
+    const headRow = this.props.headRowRender ? this.props.headRowRender(row) : this.headRowRender(row);
 
     return (
       <div
