@@ -24,7 +24,8 @@
   border: 1px double #108ee9;
   min-width: 150px;
   max-width: 150px;
-  margin-left: -1px;
+  //margin-left: -1px;
+  background-color: #fff;
   position: relative;
 }
 
