@@ -69,6 +69,7 @@ class ForteTable extends React.Component {
         columns={this.props.columns}
         cellRender={this.props.cellRender}
         cellStyle={this.props.cellStyle}
+        cellClassName={this.props.cellClassName}
         headRowRender={this.props.headRowRender}
         tableController={this.state.tableController}
         getTableController={this.props.getTableController}
