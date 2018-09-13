@@ -141,8 +141,11 @@ class TableCell extends React.Component {
     let className = this.state.isSelected ?
       'ft-cell__container ft-cell__container--active'
       : 'ft-cell__container ft-cell__container--normal';
-    className = this.props.cellClassName ? this.props.cellClassName( className, this.props.column,this.props.row,this) : '';
-    let style = this.props.cellStyle ? this.props.cellStyle(this.props.column,this.props.row,this) : {};
+    className = this.props.cellClassName ? this.props.cellClassName( className, this.props.column,this.props.row,this) : className;
+    let style = {};
+    style = this.props.cellStyle ? this.props.cellStyle( style, this.props.column,this.props.row,this) : style;
+
+    style.width = this.props.columnWidth;
 
     return (
       <div

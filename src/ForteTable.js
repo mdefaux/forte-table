@@ -23,10 +23,44 @@ class ForteTable extends React.Component {
       this.state.tableController = props.createController(this);
   }
 
-  /** On initializing query the data store and sets table in loading state.
+  /** Sets the width for each column.
    *
    */
   componentWillMount() {
+
+    const columnsWidth = this.props.columns().map((column, index) => {
+      let columnWidth;
+
+      if (this.props.onColumnWidth)
+        columnWidth = this.props.onColumnWidth(columnWidth, column);
+
+      columnWidth = columnWidth || this.props.defaultColumnWidth || 150;
+
+      return columnWidth;
+    });
+    this.setState( {columnsWidth: columnsWidth} );    // puts in state the array with columns width
+  }
+
+  /**Callback invoked by ColumnHeader when resized.
+   *
+   * @param columnWidth - the new value of the column width after resizing
+   * @param index - index of the column into model.
+   * @param headerComponent - the headerColumn component that has been sized.
+   * @return {*} the new value of the column width, eventually modified by a custom callback.
+   */
+  onColumnWidth(columnWidth, index, headerComponent)
+  {
+    let column = this.props.columns()[index];
+
+    if (this.props.onColumnWidth)
+      columnWidth = this.props.onColumnWidth(columnWidth, column, headerComponent);
+
+    // updates the state... and redraws the table
+    let columnsWidth = this.getState( columnsWidth ); // gets the array of the columns width
+    columnsWidth[ index ]= columnsWidth;              // updates the value in the corresponding position
+    this.setState( {columnsWidth: columnsWidth} );    // saves the array of columns width into state (and refresh the whole table)
+
+    return columnWidth;
   }
 
   /** Checks if new row is to be rendered
@@ -61,6 +95,8 @@ class ForteTable extends React.Component {
         // changeSortColumn={this.changeSortColumn}
         sorting={this.state.sorting}
         loggedUser={this.props.loggedUser}
+        onColumnWidth={this.onColumnWidth}
+        columnsWidth={this.state.columnsWidth}
       />
     );
     const tableBody = (
@@ -70,6 +106,7 @@ class ForteTable extends React.Component {
         cellRender={this.props.cellRender}
         cellStyle={this.props.cellStyle}
         cellClassName={this.props.cellClassName}
+        columnsWidth={this.state.columnsWidth}
         headRowRender={this.props.headRowRender}
         tableController={this.state.tableController}
         getTableController={this.props.getTableController}

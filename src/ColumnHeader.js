@@ -17,6 +17,18 @@ class ColumnHeader extends React.Component {
     });
   };
 
+
+  onColumnWidth( columnWidth ) {
+
+    columnWidth = this.props.onColumnWidth ?
+      this.props.onColumnWidth( columnWidth, this.props.index, this )
+      : columnWidth;
+
+    columnWidth =  columnWidth || this.props.defaultColumnWidth || 150;
+
+    return columnWidth;
+  }
+
   render() {
     let content;
     if( this.props.headColRender )
@@ -24,9 +36,15 @@ class ColumnHeader extends React.Component {
     else
       content = this.props.column;
 
+    let style = {};
+
+    style.width = this.props.columnWidth; // this.onColumnWidth();
+    console.log(style);
+
     return (
       <div
         className="ft-table--cell__header"
+        style={style}
         onClick={() => {
           this.props.onColumnHeaderClick(this.props.index);
         }}
