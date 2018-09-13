@@ -146,6 +146,8 @@ class TableCell extends React.Component {
     style = this.props.cellStyle ? this.props.cellStyle( style, this.props.column,this.props.row,this) : style;
 
     style.width = this.props.columnWidth;
+    style.minWidth = this.props.columnWidth;
+    style.maxWidth = this.props.columnWidth;
 
     return (
       <div

@@ -39,7 +39,9 @@ class ColumnHeader extends React.Component {
     let style = {};
 
     style.width = this.props.columnWidth; // this.onColumnWidth();
-    console.log(style);
+    style.minWidth = this.props.columnWidth;
+    style.maxWidth = this.props.columnWidth;
+    // console.log(style);
 
     return (
       <div
