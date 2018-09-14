@@ -137,10 +137,11 @@ class TableCell extends React.Component {
         this.props.row,
         this
       );
-    let className = this.state.isSelected ?
+    let className = this.state.isSelected || this.state.input ? // ft-cell__container ft-cell__container--active
       'ft-cell__container ft-cell__container--active'
       : 'ft-cell__container ft-cell__container--normal';
-    className = this.props.cellClassName ? this.props.cellClassName( className, this.props.column,this.props.row,this) : className;
+    if( this.props.cellClassName )
+      className = this.props.cellClassName( className, this.props.column,this.props.row,this);
     let style = {};
     style = this.props.cellStyle ? this.props.cellStyle( style, this.props.column,this.props.row,this) : style;
 
