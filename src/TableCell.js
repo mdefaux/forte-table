@@ -4,7 +4,7 @@ import '../styles/table-cell.css';
 class TableCell extends React.Component {
   state = {
     input: false,
-    tempContent: null, // TODO: handle edit mode
+    tempContent: undefined, // TODO: handle edit mode
     isValid: true, // TODO: handle valid value
     isSelected: false
   };
