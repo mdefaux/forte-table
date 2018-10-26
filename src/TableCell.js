@@ -172,6 +172,10 @@ class TableCell extends React.Component {
         onMouseUp={this.onMouseUp}
         onKeyDown={this.onKeyDown}
         onKeyUp={this.onKeyUp}
+        style={{
+          color: this.props.column.name == 'nome' ? '#043c70' : '',
+          textDecoration: this.props.column.name == 'nome' ? 'underline' : '',
+        }}
       >
         {content}
       </div>
