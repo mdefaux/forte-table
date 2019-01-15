@@ -4,7 +4,7 @@ import '../styles/table-cell.css';
 class TableCell extends React.Component {
   state = {
     input: false,
-    tempContent: null, // TODO: handle edit mode
+    tempContent: undefined, // TODO: handle edit mode
     isValid: true, // TODO: handle valid value
     isSelected: false
   };
@@ -97,7 +97,7 @@ class TableCell extends React.Component {
   };
   onKeyUp = evt => {
     evt = evt || window.event;
-    console.log(evt.which);
+    // console.log(evt.which);
     if (this.props.onCellKeyUp)
       this.props.onCellKeyUp(
         evt,
@@ -122,26 +122,26 @@ class TableCell extends React.Component {
   };
 
   render() {
+
+    let content = ' ';
+
     if (this.hasController() && this.state.input) {
-      return this.getController().getContent(
+      content = this.getController().getContent(
         this.props.column,
         this.props.row,
         this
       );
-    }
-
-    let content = ' ';
-    if (this.props.cellRender)
+    } else if (this.props.cellRender)
       content = this.props.cellRender(
         this.props.column,
         this.props.row,
-        // this.props.model,
         this
       );
-    let className = this.state.isSelected ?
+    let className = this.state.isSelected || this.state.input ? // ft-cell__container ft-cell__container--active
       'ft-cell__container ft-cell__container--active'
       : 'ft-cell__container ft-cell__container--normal';
-    className = this.props.cellClassName ? this.props.cellClassName( className, this.props.column,this.props.row,this) : className;
+    if( this.props.cellClassName )
+      className = this.props.cellClassName( className, this.props.column,this.props.row,this);
     let style = {};
     style = this.props.cellStyle ? this.props.cellStyle( style, this.props.column,this.props.row,this) : style;
 
