@@ -45,6 +45,8 @@ class TableRow extends React.Component {
    * @returns {boolean} true if the row is been selected and wan not, or viceversa.
    */
   shouldComponentUpdate(nextProps, nextState) {
+    return true;
+
     return (
       this.props.isActive ||
       nextProps.isActive ||
@@ -143,8 +145,9 @@ class TableRow extends React.Component {
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
           selectedCells={this.props.selectedCells}
-          dragStartSelection={this.props.dragStartSelection}
-          dragEndSelection={this.props.dragEndSelection}
+          onSelectionDragStart={this.props.onSelectionDragStart}
+          onSelectionDragMove={this.props.onSelectionDragMove}
+          onSelectionDragEnd={this.props.onSelectionDragEnd}
           columnWidth={this.props.columnsWidth[index]}
           getRowController={this.getController}
 

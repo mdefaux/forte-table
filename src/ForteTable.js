@@ -18,7 +18,8 @@ class ForteTable extends React.Component {
     this.activeRowId = null;
     this.rowIndex = null;
 
-    // this.selectedCells = [ {col: 0, row: 3}, {col: 3, row: 0} ];
+    //this.state.selectedCells = [ {col: 0, row: 3}, {col: 3, row: 0} ];
+    this.dragStartCells = false;
 
     if (props.createController)
       // if there is a controller factory, call it
@@ -80,6 +81,47 @@ class ForteTable extends React.Component {
     this.rowIndex = rowIndex;
   };
 
+  onSelectionDragStart = (cell) =>
+  {
+    this.dragStartCells = { col: cell.props.columnIndex, row: cell.props.rowIndex };
+    this.setState( {selectedCells: [this.dragStartCells]} );
+    // console.log("star drag");
+    return false;
+  };
+
+  onSelectionDragMove = (cell) =>
+  {
+    if( !this.dragStartCells )
+      return;
+    // console.log("end drag");
+    let selectedCells = [];
+
+    let startCoord = this.dragStartCells;
+    let endCoord = { col: cell.props.columnIndex, row: cell.props.rowIndex };
+
+    if( startCoord.col === endCoord.col && startCoord.row === endCoord.row ){
+      this.setState( {selectedCells: []} );
+      return true;
+    }
+
+    for( let r= startCoord.row; r <= endCoord.row; r++ )
+    {
+      for( let c= startCoord.col; c <= endCoord.col; c++ )
+      {
+        selectedCells.push( { col: c, row: r } );
+        // console.log(`c: ${c}, r: ${r}`);
+      }
+    }
+
+    this.setState( {selectedCells: selectedCells} );
+    return false;
+  };
+
+  onSelectionDragEnd = (cell) =>
+  {
+    this.dragStartCells = false;
+  };
+
   /**Renders ForteDataGrid component.
    * Composes a Toolbar, a table header and a table body.
    *
@@ -122,9 +164,10 @@ class ForteTable extends React.Component {
         onCellKeyDown={this.props.onCellKeyDown}
         onCellKeyUp={this.props.onCellKeyUp}
 
-        selectedCells={this.selectedCells}
-        dragStartSelection={this.dragStartSelection}
-        dragEndSelection={this.dragEndSelection}
+        selectedCells={this.state.selectedCells}
+        onSelectionDragStart={this.onSelectionDragStart}
+        onSelectionDragMove={this.onSelectionDragMove}
+        onSelectionDragEnd={this.onSelectionDragEnd}
 
         newRow={this.props.newRow}
       />

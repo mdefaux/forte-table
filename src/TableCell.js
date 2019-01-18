@@ -63,6 +63,8 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
+    // e.preventDefault();
+    return this.props.onSelectionDragStart(this,e);
   };
   onMouseMove = e => {
     if (this.props.onCellMouseMove)
@@ -73,6 +75,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
+    this.props.onSelectionDragMove(this,e);
   };
   onMouseUp = e => {
     if (this.props.onCellMouseUp)
@@ -83,6 +86,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
+    this.props.onSelectionDragEnd(this,e);
   };
   onKeyDown = evt => {
     evt = evt || window.event;
@@ -180,6 +184,9 @@ class TableCell extends React.Component {
         onMouseUp={this.onMouseUp}
         onKeyDown={this.onKeyDown}
         onKeyUp={this.onKeyUp}
+        onDragStart={(e) => {return !this.props.dragStartSelection(this,e);}}
+        onDrag={(e) => {return !this.props.dragEndSelection(this,e);}}
+        //draggable={true}
       >
         {content}
       </div>
