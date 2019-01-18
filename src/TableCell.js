@@ -149,6 +149,14 @@ class TableCell extends React.Component {
     style.minWidth = this.props.columnWidth;
     style.maxWidth = this.props.columnWidth;
 
+    if( this.props.selectedCells ) {
+      // let coord = { col: this.props.columnIndex, row: this.props.rowIndex };
+
+      if( this.props.selectedCells.filter( (o) => (o.col === this.props.columnIndex && o.row === this.props.rowIndex) ).length ) {
+        style.backgroundColor = "#BFBFFF";
+      }
+    }
+
     return (
       <div
         className={ className }

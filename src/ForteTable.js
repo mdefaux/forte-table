@@ -18,6 +18,8 @@ class ForteTable extends React.Component {
     this.activeRowId = null;
     this.rowIndex = null;
 
+    // this.selectedCells = [ {col: 0, row: 3}, {col: 3, row: 0} ];
+
     if (props.createController)
       // if there is a controller factory, call it
       this.state.tableController = props.createController(this);
@@ -119,6 +121,10 @@ class ForteTable extends React.Component {
         onCellMouseUp={this.props.onCellMouseUp}
         onCellKeyDown={this.props.onCellKeyDown}
         onCellKeyUp={this.props.onCellKeyUp}
+
+        selectedCells={this.selectedCells}
+        dragStartSelection={this.dragStartSelection}
+        dragEndSelection={this.dragEndSelection}
 
         newRow={this.props.newRow}
       />

@@ -137,9 +137,14 @@ class TableRow extends React.Component {
           model={this.props.model}
           column={column}
           row={rowData}
+          columnIndex={index}
+          rowIndex={this.props.index}
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
+          selectedCells={this.props.selectedCells}
+          dragStartSelection={this.props.dragStartSelection}
+          dragEndSelection={this.props.dragEndSelection}
           columnWidth={this.props.columnsWidth[index]}
           getRowController={this.getController}
 

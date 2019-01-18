@@ -66,6 +66,10 @@ class TableBody extends React.Component {
           onCellKeyDown={this.props.onCellKeyDown}
           onCellKeyUp={this.props.onCellKeyUp}
 
+          selectedCells={this.props.selectedCells}
+          dragStartSelection={this.props.dragStartSelection}
+          dragEndSelection={this.props.dragEndSelection}
+
           type={this.props.type}
           hover={this.props.hover}
           reload={this.props.reload}
