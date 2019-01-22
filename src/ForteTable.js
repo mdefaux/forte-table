@@ -91,14 +91,25 @@ class ForteTable extends React.Component {
 
   onSelectionDragMove = (cell) =>
   {
-    if( !this.dragStartCells )
+    if( !this.dragStartCells )  // if there is no started drag, exits
       return;
-    // console.log("end drag");
-    let selectedCells = [];
 
-    let startCoord = this.dragStartCells;
-    let endCoord = { col: cell.props.columnIndex, row: cell.props.rowIndex };
+    let selectedCells = [];     // empties the selected value
+    // TODO: selectedCells = {};
 
+    // defines start and end coordinates: end should be > than start.
+    // takes the min coordinates from starting cell and pointed cell
+    let startCoord = {
+      col: Math.min(this.dragStartCells.col, cell.props.columnIndex),
+      row: Math.min(this.dragStartCells.row, cell.props.rowIndex)
+    };
+    // takes the max coordinates from starting cell and pointed cell
+    let endCoord = {
+      col: Math.max(this.dragStartCells.col, cell.props.columnIndex),
+      row: Math.max(this.dragStartCells.row, cell.props.rowIndex)
+    };
+
+    // TODO: checks if useful
     if( startCoord.col === endCoord.col && startCoord.row === endCoord.row ){
       this.setState( {selectedCells: []} );
       return true;
@@ -110,6 +121,8 @@ class ForteTable extends React.Component {
       {
         selectedCells.push( { col: c, row: r } );
         // console.log(`c: ${c}, r: ${r}`);
+        // if( !selectedCells[ r ] )  selectedCells[ r ]= [];
+        // selectedCells[ r ].push( c );
       }
     }
 

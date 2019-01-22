@@ -184,9 +184,9 @@ class TableCell extends React.Component {
         onMouseUp={this.onMouseUp}
         onKeyDown={this.onKeyDown}
         onKeyUp={this.onKeyUp}
-        onDragStart={(e) => {return !this.props.dragStartSelection(this,e);}}
-        onDrag={(e) => {return !this.props.dragEndSelection(this,e);}}
-        //draggable={true}
+        // onDragStart={(e) => {return !this.props.dragStartSelection(this,e);}}
+        // onDrag={(e) => {return !this.props.dragEndSelection(this,e);}}
+        draggable={false}
       >
         {content}
       </div>
