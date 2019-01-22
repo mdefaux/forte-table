@@ -1,15 +1,33 @@
+const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const htmlWebpackPlugin = new HtmlWebpackPlugin({
-  template: path.join(__dirname, "examples/src/index.html"),
-  filename: "./index.html"
-});
+
 
 module.exports = {
+  mode: "development",
   entry: path.join(__dirname, "examples/src/index.js"),
   output: {
     path: path.join(__dirname, "examples/dist"),
     filename: "bundle.js"
+  },
+  devtool: 'inline-source-map',
+  devServer: {
+    port: 3001,
+    hot: true,
+    overlay: {
+      warnings: true,
+      errors: true
+    }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, "examples/src/index.html"),
+      filename: "./index.html"
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
+  resolve: {
+    extensions: [".js", ".jsx"]
   },
   module: {
     rules: [{
@@ -22,12 +40,5 @@ module.exports = {
         use: ["style-loader", "css-loader"]
       }
     ]
-  },
-  plugins: [htmlWebpackPlugin],
-  resolve: {
-    extensions: [".js", ".jsx"]
-  },
-  devServer: {
-    port: 3001
   }
 };
