@@ -40,7 +40,7 @@ class TableBody extends React.Component {
       }
 
       console.log(this.props.selectedCells);
-      let sel = this.props.selectedCells[index];
+      let sel = this.props.selectedCells && this.props.selectedCells[index];
       console.log(sel);
       // debugger;
 
