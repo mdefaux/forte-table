@@ -1,17 +1,16 @@
-import React from "react";
-import TableRow from "./TableRow";
-import styles from "../styles/table-body-styles";
+import React from 'react';
+import TableRow from './TableRow';
+import styles from '../styles/table-body-styles';
 
 class TableBody extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       activeRow: -20,
       range: {
         start: false,
-        end: false
-      }
+        end: false,
+      },
     };
   }
 
@@ -30,13 +29,19 @@ class TableBody extends React.Component {
   };
 
   render() {
-    let rowIndexes = this.props.rows( this.state.range.start, this.state.range.end );
+    let rowIndexes = this.props.rows(
+      this.state.range.start,
+      this.state.range.end
+    );
     const rows = rowIndexes.map((dataRecord, index) => {
       let isActive = false;
       if (dataRecord.id === this.state.activeRow) {
         isActive = true;
       }
 
+      console.log(this.props.selectedCells);
+      let sel = this.props.selectedCells[index];
+      console.log(sel);
       // debugger;
 
       return (
@@ -57,7 +62,6 @@ class TableBody extends React.Component {
           headRowRender={this.props.headRowRender}
           headers={this.props.headers}
           setActiveRow={this.setActiveRow}
-
           onCellClick={this.props.onCellClick}
           onCellDoubleClick={this.props.onCellDoubleClick}
           onCellMouseDown={this.props.onCellMouseDown}
@@ -65,12 +69,10 @@ class TableBody extends React.Component {
           onCellMouseUp={this.props.onCellMouseUp}
           onCellKeyDown={this.props.onCellKeyDown}
           onCellKeyUp={this.props.onCellKeyUp}
-
-          selectedCells={this.props.selectedCells}
+          selectedCells={sel}
           onSelectionDragStart={this.props.onSelectionDragStart}
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}
-
           type={this.props.type}
           hover={this.props.hover}
           reload={this.props.reload}

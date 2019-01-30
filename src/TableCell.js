@@ -6,7 +6,7 @@ class TableCell extends React.Component {
     input: false,
     tempContent: undefined, // TODO: handle edit mode
     isValid: true, // TODO: handle valid value
-    isSelected: false
+    isSelected: false,
   };
 
   cellController = null;
@@ -23,13 +23,11 @@ class TableCell extends React.Component {
     return this.cellController;
   };
 
-  componentWillMount() {
-  }
+  componentWillMount() {}
 
-  setSelected = ( toBeSelected ) => {
+  setSelected = toBeSelected => {
     this.setState({ isSelected: toBeSelected });
-    if( toBeSelected )
-    {
+    if (toBeSelected) {
       this.props.setActiveRow();
     }
   };
@@ -64,7 +62,7 @@ class TableCell extends React.Component {
         this
       );
     // e.preventDefault();
-    return this.props.onSelectionDragStart(this,e);
+    return this.props.onSelectionDragStart(this, e);
   };
   onMouseMove = e => {
     if (this.props.onCellMouseMove)
@@ -75,7 +73,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
-    this.props.onSelectionDragMove(this,e);
+    this.props.onSelectionDragMove(this, e);
   };
   onMouseUp = e => {
     if (this.props.onCellMouseUp)
@@ -86,7 +84,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
-    this.props.onSelectionDragEnd(this,e);
+    this.props.onSelectionDragEnd(this, e);
   };
   onKeyDown = evt => {
     evt = evt || window.event;
@@ -113,20 +111,15 @@ class TableCell extends React.Component {
   };
 
   getStyle() {
-    if( this.props.cellStyle )
-      return this.props.cellStyle(
-        this.props.column,
-        this.props.row,
-        this
-      );
+    if (this.props.cellStyle)
+      return this.props.cellStyle(this.props.column, this.props.row, this);
 
-    return this.state.isSelected ?
-        'ft-cell__container ft-cell__container--active'
-        : 'ft-cell__container ft-cell__container--normal';
-  };
+    return this.state.isSelected
+      ? 'ft-cell__container ft-cell__container--active'
+      : 'ft-cell__container ft-cell__container--normal';
+  }
 
   render() {
-
     let content = ' ';
 
     if (this.hasController() && this.state.input) {
@@ -136,35 +129,44 @@ class TableCell extends React.Component {
         this
       );
     } else if (this.props.cellRender)
-      content = this.props.cellRender(
+      content = this.props.cellRender(this.props.column, this.props.row, this);
+    let className =
+      this.state.isSelected || this.state.input // ft-cell__container ft-cell__container--active
+        ? 'ft-cell__container ft-cell__container--active'
+        : 'ft-cell__container ft-cell__container--normal';
+    if (this.props.cellClassName)
+      className = this.props.cellClassName(
+        className,
         this.props.column,
         this.props.row,
         this
       );
-    let className = this.state.isSelected || this.state.input ? // ft-cell__container ft-cell__container--active
-      'ft-cell__container ft-cell__container--active'
-      : 'ft-cell__container ft-cell__container--normal';
-    if( this.props.cellClassName )
-      className = this.props.cellClassName( className, this.props.column,this.props.row,this);
     let style = {};
-    style = this.props.cellStyle ? this.props.cellStyle( style, this.props.column,this.props.row,this) : style;
+    style = this.props.cellStyle
+      ? this.props.cellStyle(style, this.props.column, this.props.row, this)
+      : style;
 
     style.width = this.props.columnWidth;
     style.minWidth = this.props.columnWidth;
     style.maxWidth = this.props.columnWidth;
 
-    if( this.props.selectedCells ) {
+    console.log(this.props.selectedCells);
+    if (this.props.selectedCells) {
       // let coord = { col: this.props.columnIndex, row: this.props.rowIndex };
 
-      if( this.props.selectedCells.filter( (o) => (o.col === this.props.columnIndex && o.row === this.props.rowIndex) ).length ) {
-        style.backgroundColor = "#BFBFFF";
+      if (
+        this.props.selectedCells.filter(
+          o => o.col === this.props.columnIndex && o.row === this.props.rowIndex
+        ).length
+      ) {
+        style.backgroundColor = '#BFBFFF';
       }
     }
 
     return (
       <div
-        className={ className }
-        style={ style }
+        className={className}
+        style={style}
         // style={
         //   this.state.isSelected
         //     ? styles.container__active()
