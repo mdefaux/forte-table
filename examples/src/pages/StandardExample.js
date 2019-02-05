@@ -23,14 +23,14 @@ function StandardExample() {
 
   return (
     <ForteTable
-      rows={() => [0, 1]}
+      rows={() => data}
       columns={() => ['id', 'first_name', 'last_name', 'email', 'ip_address']}
       cellRender={(c, r) => {
-        return data[r][c];
+        return r[c];
       }}
       onCellClick={(e, c, r) => {
-        let title = data[r].gender === 'Male' ? 'Mr.' : 'Ms.';
-        let text = `${title} ${data[r].last_name} has ${c} = '${data[r][c]}'.`;
+        let title = r.gender === 'Male' ? 'Mr.' : 'Ms.';
+        let text = `${title} ${r.last_name} has ${c} = '${r[c]}'.`;
         alert(text);
       }}
     />
