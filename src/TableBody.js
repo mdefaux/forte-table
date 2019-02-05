@@ -34,14 +34,17 @@ class TableBody extends React.Component {
       this.state.range.end
     );
     const rows = rowIndexes.map((dataRecord, index) => {
-      let isActive = false;
-      if (dataRecord.id === this.state.activeRow) {
-        isActive = true;
-      }
+      // let isActive = false;
+      // if (dataRecord.id === this.state.activeRow) {
+      //   isActive = true;
+      // }
 
-      console.log(this.props.selectedCells);
+      let isActive = index === this.props.activeRowIndex;
+
+      // console.log(this.props.selectedCells);
       let sel = this.props.selectedCells && this.props.selectedCells[index];
-      console.log(sel);
+      let isSelected = !!sel;
+      // console.log(sel);
       // debugger;
 
       return (
@@ -62,6 +65,8 @@ class TableBody extends React.Component {
           headRowRender={this.props.headRowRender}
           headers={this.props.headers}
           setActiveRow={this.setActiveRow}
+          activeRowIndex={this.props.activeRowIndex}
+          activeColIndex={this.props.activeColIndex}
           onCellClick={this.props.onCellClick}
           onCellDoubleClick={this.props.onCellDoubleClick}
           onCellMouseDown={this.props.onCellMouseDown}
@@ -69,7 +74,9 @@ class TableBody extends React.Component {
           onCellMouseUp={this.props.onCellMouseUp}
           onCellKeyDown={this.props.onCellKeyDown}
           onCellKeyUp={this.props.onCellKeyUp}
+          setActiveCell={this.props.setActiveCell}
           selectedCells={sel}
+          isSelected={isSelected}
           onSelectionDragStart={this.props.onSelectionDragStart}
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}

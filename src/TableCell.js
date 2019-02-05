@@ -25,6 +25,21 @@ class TableCell extends React.Component {
 
   componentWillMount() {}
 
+  /** Prevents Row to be re-rendered if it does not change selection state.
+   *
+   * @param nextProps - properties to be set
+   * @returns {boolean} true if the row is been selected and wan not, or viceversa.
+   */
+  shouldComponentUpdate(nextProps, nextState) {
+    return (
+      this.props.isActive ||
+      nextProps.isActive ||
+      this.props.isSelected ||
+      nextProps.isSelected ||
+      nextState.hover !== this.state.hover
+    );
+  }
+
   setSelected = toBeSelected => {
     this.setState({ isSelected: toBeSelected });
     if (toBeSelected) {
@@ -41,6 +56,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
+    this.props.setActiveCell(this);
   };
   onDoubleClick = e => {
     if (this.props.onCellDoubleClick)
@@ -131,7 +147,8 @@ class TableCell extends React.Component {
     } else if (this.props.cellRender)
       content = this.props.cellRender(this.props.column, this.props.row, this);
     let className =
-      this.state.isSelected || this.state.input // ft-cell__container ft-cell__container--active
+      // this.state.isSelected || this.state.input // ft-cell__container ft-cell__container--active
+      this.props.isActive
         ? 'ft-cell__container ft-cell__container--active'
         : 'ft-cell__container ft-cell__container--normal';
     if (this.props.cellClassName)
@@ -150,18 +167,21 @@ class TableCell extends React.Component {
     style.minWidth = this.props.columnWidth;
     style.maxWidth = this.props.columnWidth;
 
-    console.log(this.props.selectedCells);
-    if (this.props.selectedCells) {
-      // let coord = { col: this.props.columnIndex, row: this.props.rowIndex };
+    // console.log(this.props.selectedCells);
+    // if (this.props.selectedCells && !this.props.isActive) {
+    //   // let coord = { col: this.props.columnIndex, row: this.props.rowIndex };
+    //
+    //   if (
+    //     this.props.selectedCells.filter(
+    //       o => o.col === this.props.columnIndex && o.row === this.props.rowIndex
+    //     ).length
+    //   ) {
+    //     style.backgroundColor = '#BFBFFF';
+    //   }
+    // }
 
-      if (
-        this.props.selectedCells.filter(
-          o => o.col === this.props.columnIndex && o.row === this.props.rowIndex
-        ).length
-      ) {
-        style.backgroundColor = '#BFBFFF';
-      }
-    }
+    if (this.props.isSelected && !this.props.isActive)
+      style.backgroundColor = '#BFBFFF';
 
     return (
       <div

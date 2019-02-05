@@ -81,6 +81,14 @@ class ForteTable extends React.Component {
     this.rowIndex = rowIndex;
   };
 
+  setActiveCell = cell => {
+    this.setState({
+      activeCell: cell,
+      activeRowIndex: cell.props.rowIndex,
+      activeColIndex: cell.props.columnIndex,
+    });
+  };
+
   onSelectionDragStart = cell => {
     this.dragStartCells = {
       col: cell.props.columnIndex,
@@ -121,10 +129,10 @@ class ForteTable extends React.Component {
     // }
 
     for (let r = startCoord.row; r <= endCoord.row; r++) {
-      selectedRows[r] = [];
+      selectedRows[r] = {};
       for (let c = startCoord.col; c <= endCoord.col; c++) {
         // selectedCells.push({ col: c, row: r });
-        selectedRows[r].push({ col: c, row: r });
+        selectedRows[r][c] = { col: c, row: r };
         // console.log(`c: ${c}, r: ${r}`);
         // if( !selectedCells[ r ] )  selectedCells[ r ]= [];
         // selectedCells[ r ].push( c );
@@ -174,6 +182,9 @@ class ForteTable extends React.Component {
         getTableController={this.props.getTableController}
         type={this.props.type ? this.props.type : 'small'}
         setActiveRow={this.setActiveRow}
+        setActiveCell={this.setActiveCell}
+        activeRowIndex={this.state.activeRowIndex}
+        activeColIndex={this.state.activeColIndex}
         onCellClick={this.props.onCellClick}
         onCellDoubleClick={this.props.onCellDoubleClick}
         onCellMouseDown={this.props.onCellMouseDown}
