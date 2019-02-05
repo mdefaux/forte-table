@@ -1,37 +1,21 @@
 import React from 'react';
-import ForteTable from '../../../src';
+import ForteTable from '../../../src'; //
+import data from '../../data/persons.json'; // loads data from file
 
 function StandardExample() {
-  let data = [
-    {
-      id: 1,
-      first_name: 'Floyd',
-      last_name: 'Ruusa',
-      email: 'fruusa0@php.net',
-      gender: 'Male',
-      ip_address: '17.133.167.13',
-    },
-    {
-      id: 2,
-      first_name: 'Floris',
-      last_name: 'Delaney',
-      email: 'fdelaney1@arizona.edu',
-      gender: 'Female',
-      ip_address: '233.200.180.188',
-    },
-  ];
-
   return (
     <ForteTable
-      rows={() => data}
-      columns={() => ['id', 'first_name', 'last_name', 'email', 'ip_address']}
+      rows={() => data} // sets the rows as the array of data
+      columns={() => ['id', 'first_name', 'last_name', 'email', 'ip_address']} // sets the array of columns
       cellRender={(c, r) => {
-        return r[c];
+        // renders the content of each cell
+        return r[c]; // takes text of column c of the row r
       }}
-      onCellClick={(e, c, r) => {
-        let title = r.gender === 'Male' ? 'Mr.' : 'Ms.';
-        let text = `${title} ${r.last_name} has ${c} = '${r[c]}'.`;
-        alert(text);
+      onCellDoubleClick={(e, c, r) => {
+        // callback on double click over cell
+        let title = r.gender === 'Male' ? 'Mr.' : 'Ms.'; // gets title form gender field of current row
+        let text = `${title} ${r.last_name} has ${c} = '${r[c]}'.`; // composes text
+        alert(text); // displays message.
       }}
     />
   );

@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "first_name": "Floyd",
+    "last_name": "Ruusa",
+    "email": "fruusa0@php.net",
+    "gender": "Male",
+    "ip_address": "17.133.167.13"
+  },
+  {
+    "id": 2,
+    "first_name": "Floris",
+    "last_name": "Delaney",
+    "email": "fdelaney1@arizona.edu",
+    "gender": "Female",
+    "ip_address": "233.200.180.188"
+  }
+]
