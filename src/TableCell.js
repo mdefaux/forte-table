@@ -40,12 +40,12 @@ class TableCell extends React.Component {
     );
   }
 
-  setSelected = toBeSelected => {
-    this.setState({ isSelected: toBeSelected });
-    if (toBeSelected) {
-      this.props.setActiveRow();
-    }
-  };
+  // setSelected = toBeSelected => {
+  //   this.setState({ isSelected: toBeSelected });
+  //   if (toBeSelected) {
+  //     this.props.setActiveRow();
+  //   }
+  // };
 
   onClick = e => {
     if (this.props.onCellClick)
@@ -126,26 +126,30 @@ class TableCell extends React.Component {
       );
   };
 
-  getStyle() {
-    if (this.props.cellStyle)
-      return this.props.cellStyle(this.props.column, this.props.row, this);
-
-    return this.state.isSelected
-      ? 'ft-cell__container ft-cell__container--active'
-      : 'ft-cell__container ft-cell__container--normal';
-  }
+  // getStyle() {
+  //   if (this.props.cellStyle)
+  //     return this.props.cellStyle(this.props.column, this.props.row, this);
+  //
+  //   return this.state.isSelected
+  //     ? 'ft-cell__container ft-cell__container--active'
+  //     : 'ft-cell__container ft-cell__container--normal';
+  // }
 
   render() {
     let content = ' ';
 
-    if (this.hasController() && this.state.input) {
-      content = this.getController().getContent(
-        this.props.column,
-        this.props.row,
-        this
-      );
-    } else if (this.props.cellRender)
+    // if (this.hasController() && this.state.input) {
+    //   content = this.getController().getContent(
+    //     this.props.column,
+    //     this.props.row,
+    //     this
+    //   );
+    // } else
+
+    if (this.props.cellRender)
       content = this.props.cellRender(this.props.column, this.props.row, this);
+
+    // sets active class if cell has active property
     let className =
       // this.state.isSelected || this.state.input // ft-cell__container ft-cell__container--active
       this.props.isActive
@@ -163,22 +167,10 @@ class TableCell extends React.Component {
       ? this.props.cellStyle(style, this.props.column, this.props.row, this)
       : style;
 
+    // sets height and width of the cell
     style.width = this.props.columnWidth;
     style.minWidth = this.props.columnWidth;
     style.maxWidth = this.props.columnWidth;
-
-    // console.log(this.props.selectedCells);
-    // if (this.props.selectedCells && !this.props.isActive) {
-    //   // let coord = { col: this.props.columnIndex, row: this.props.rowIndex };
-    //
-    //   if (
-    //     this.props.selectedCells.filter(
-    //       o => o.col === this.props.columnIndex && o.row === this.props.rowIndex
-    //     ).length
-    //   ) {
-    //     style.backgroundColor = '#BFBFFF';
-    //   }
-    // }
 
     if (this.props.isSelected && !this.props.isActive)
       style.backgroundColor = '#BFBFFF';
@@ -187,18 +179,7 @@ class TableCell extends React.Component {
       <div
         className={className}
         style={style}
-        // style={
-        //   this.state.isSelected
-        //     ? styles.container__active()
-        //     : styles.container
-        // }
         tabIndex={1}
-        // style={styles.handleValidation(
-        //   this.state.isValid,
-        //   this.props.activeRow,
-        //   this.props.fieldModel.mandatory,
-        //   this.props.fieldModel.readonly
-        // )}
         onClick={this.onClick}
         onDoubleClick={this.onDoubleClick}
         onMouseDown={this.onMouseDown}
