@@ -6,7 +6,7 @@ class TableCell extends React.Component {
     input: false,
     tempContent: undefined, // TODO: handle edit mode
     isValid: true, // TODO: handle valid value
-    isSelected: false,
+    // isSelected: false,
   };
 
   cellController = null;

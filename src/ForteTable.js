@@ -11,13 +11,9 @@ class ForteTable extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    // this.state = {};
 
-    this.activeRowId = null;
-    this.rowIndex = null;
-
-    //this.state.selectedCells = [ {col: 0, row: 3}, {col: 3, row: 0} ];
-    this.dragStartCells = false;
+    this.dragStartCells = false; // keeps the starting cell of a drag, if false no drag is currently active
 
     if (props.createController)
       // if there is a controller factory, call it
@@ -76,10 +72,10 @@ class ForteTable extends React.Component {
    * @param rowId
    * @param rowIndex
    */
-  setActiveRow = (rowId, rowIndex) => {
-    this.activeRowId = rowId;
-    this.rowIndex = rowIndex;
-  };
+  // setActiveRow = (rowId, rowIndex) => {
+  //   this.activeRowId = rowId;
+  //   this.rowIndex = rowIndex;
+  // };
 
   setActiveCell = cell => {
     this.setState({
@@ -103,11 +99,10 @@ class ForteTable extends React.Component {
 
   onSelectionDragMove = cell => {
     if (!this.dragStartCells)
-      // if there is no started drag, exits
+      // if there is no drag started, exits
       return;
 
-    // let selectedCells = []; // empties the selected value
-    let selectedRows = {};
+    let selectedRows = {}; // empties the selected value
 
     // defines start and end coordinates: end should be > than start.
     // takes the min coordinates from starting cell and pointed cell
@@ -131,15 +126,10 @@ class ForteTable extends React.Component {
     for (let r = startCoord.row; r <= endCoord.row; r++) {
       selectedRows[r] = {};
       for (let c = startCoord.col; c <= endCoord.col; c++) {
-        // selectedCells.push({ col: c, row: r });
         selectedRows[r][c] = { col: c, row: r };
-        // console.log(`c: ${c}, r: ${r}`);
-        // if( !selectedCells[ r ] )  selectedCells[ r ]= [];
-        // selectedCells[ r ].push( c );
       }
     }
 
-    // this.setState({ selectedCells: selectedCells });
     this.setState({ selectedCells: selectedRows });
     return false;
   };
