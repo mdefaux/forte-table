@@ -2,12 +2,11 @@ import React from 'react';
 import '../styles/table-cell.css';
 
 class TableCell extends React.Component {
-  state = {
-    input: false,
-    tempContent: undefined, // TODO: handle edit mode
-    isValid: true, // TODO: handle valid value
-    // isSelected: false,
-  };
+  // state = {
+  //   input: false,
+  //   tempContent: undefined, // TODO: handle edit mode
+  //   isValid: true, // TODO: handle valid value
+  // };
 
   cellController = null;
 
@@ -35,8 +34,8 @@ class TableCell extends React.Component {
       this.props.isActive ||
       nextProps.isActive ||
       this.props.isSelected ||
-      nextProps.isSelected ||
-      nextState.hover !== this.state.hover
+      nextProps.isSelected // ||
+      // nextState.hover !== this.state.hover
     );
   }
 
