@@ -91,7 +91,7 @@ class ForteTable extends React.Component {
       row: cell.props.rowIndex,
     };
     let selectedRows = {};
-    selectedRows[cell.props.rowIndex] = [this.dragStartCells];
+    selectedRows[cell.props.rowIndex] = {}; // [this.dragStartCells];
 
     this.setState({ selectedCells: selectedRows });
     return false;
