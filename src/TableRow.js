@@ -29,8 +29,10 @@ class TableRow extends React.Component {
   };
 
   getController = () => {
-    if( !this.hasController() )
-      this.rowController = this.props.getTableController().createRowController( this, this.props.row );
+    if (!this.hasController())
+      this.rowController = this.props
+        .getTableController()
+        .createRowController(this, this.props.row);
     return this.rowController;
   };
 
@@ -48,10 +50,11 @@ class TableRow extends React.Component {
     return (
       this.props.isActive ||
       nextProps.isActive ||
+      this.props.isSelected ||
+      nextProps.isSelected ||
       nextState.hover !== this.state.hover
     );
   }
-
 
   handleRowHover = () => {
     this.setState(prevState => ({
@@ -59,11 +62,11 @@ class TableRow extends React.Component {
     }));
   };
 
-  setActiveRow = (rowId) => {
+  setActiveRow = rowId => {
     this.props.setActiveRow(rowId, this.props.index);
   };
 
-  headRowRender( row ) {
+  headRowRender(row) {
     return (
       <div
         style={{
@@ -105,17 +108,20 @@ class TableRow extends React.Component {
     // else
     row = this.props.row; // this.getRecord();
 
-    if( row._subscribe )
-    {
-      row._subscribe( this );
+    if (row._subscribe) {
+      row._subscribe(this);
     }
     // debugger;
-    let rowData = row._getData();
+    let rowData = row._getData ? row._getData() : row;
 
     const columns = this.props.columns();
-    const cells = columns.map(( /*headerModel*/ column, index) => {
+    const cells = columns.map((/*headerModel*/ column, index) => {
       // for each column in the view
       // TODO: copies the model of the field into a local value
+      let isSelected = !!(
+        this.props.selectedCells && this.props.selectedCells[index]
+      );
+      let isActive = this.props.isActive && index === this.props.activeColIndex;
 
       return (
         <TableCell
@@ -124,6 +130,7 @@ class TableRow extends React.Component {
           rowId={this.props.rowId}
           activeRow={this.props.isActive}
           setActiveRow={this.setActiveRow}
+          setActiveCell={this.props.setActiveCell}
           onCellClick={this.props.onCellClick}
           onCellDoubleClick={this.props.onCellDoubleClick}
           onCellMouseDown={this.props.onCellMouseDown}
@@ -131,38 +138,35 @@ class TableRow extends React.Component {
           onCellMouseUp={this.props.onCellMouseUp}
           onCellKeyDown={this.props.onCellKeyDown}
           onCellKeyUp={this.props.onCellKeyUp}
-
-          type={this.props.type ? this.props.type : "small"}
-
+          type={this.props.type ? this.props.type : 'small'}
           model={this.props.model}
           column={column}
           row={rowData}
+          columnIndex={index}
+          rowIndex={this.props.index}
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
+          selectedCells={this.props.selectedCells}
+          isSelected={isSelected}
+          isActive={isActive}
+          onSelectionDragStart={this.props.onSelectionDragStart}
+          onSelectionDragMove={this.props.onSelectionDragMove}
+          onSelectionDragEnd={this.props.onSelectionDragEnd}
           columnWidth={this.props.columnsWidth[index]}
           getRowController={this.getController}
-
         />
       );
-
     });
 
-    const headRow = this.props.headRowRender ? this.props.headRowRender(row) : this.headRowRender(row);
+    const headRow = this.props.headRowRender
+      ? this.props.headRowRender(row)
+      : this.headRowRender(row);
 
     return (
       <div
         style={{
           ...styles.root,
-          // color:
-          //   !this.state.isValid && this.props.isActive
-          //     ? styles.validation.green
-          //     : "",
-          // backgroundColor: styles.selectBackgroundColor(
-          //   this.state.hover,
-          //   this.props.newRow,
-          //   this.props.isActive
-          // ),
           height: styles.selectHeight(this.props.type),
         }}
         // onMouseEnter={this.props.hover ? this.handleRowHover : ""}

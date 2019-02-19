@@ -1,6 +1,6 @@
-import React from "react";
-import TableHeader from "./TableHeader";
-import TableBody from "./TableBody";
+import React from 'react';
+import TableHeader from './TableHeader';
+import TableBody from './TableBody';
 
 /** ForteDataGrid displays a table given a set of columns and a set of rows.
  *  Cells will receive the column and the row data to draw itself:
@@ -8,15 +8,12 @@ import TableBody from "./TableBody";
  *
  */
 class ForteTable extends React.Component {
-
-
   constructor(props) {
     super(props);
 
-    this.state = {};
+    // this.state = {};
 
-    this.activeRowId = null;
-    this.rowIndex = null;
+    this.dragStartCells = false; // keeps the starting cell of a drag, if false no drag is currently active
 
     if (props.createController)
       // if there is a controller factory, call it
@@ -27,7 +24,6 @@ class ForteTable extends React.Component {
    *
    */
   componentWillMount() {
-
     const columnsWidth = this.props.columns().map((column, index) => {
       let columnWidth;
 
@@ -38,7 +34,7 @@ class ForteTable extends React.Component {
 
       return columnWidth;
     });
-    this.setState( {columnsWidth: columnsWidth} );    // puts in state the array with columns width
+    this.setState({ columnsWidth: columnsWidth }); // puts in state the array with columns width
   }
 
   /**Callback invoked by ColumnHeader when resized.
@@ -48,17 +44,20 @@ class ForteTable extends React.Component {
    * @param headerComponent - the headerColumn component that has been sized.
    * @return {*} the new value of the column width, eventually modified by a custom callback.
    */
-  onColumnWidth(columnWidth, index, headerComponent)
-  {
+  onColumnWidth(columnWidth, index, headerComponent) {
     let column = this.props.columns()[index];
 
     if (this.props.onColumnWidth)
-      columnWidth = this.props.onColumnWidth(columnWidth, column, headerComponent);
+      columnWidth = this.props.onColumnWidth(
+        columnWidth,
+        column,
+        headerComponent
+      );
 
     // updates the state... and redraws the table
-    let columnsWidth = this.getState( columnsWidth ); // gets the array of the columns width
-    columnsWidth[ index ]= columnsWidth;              // updates the value in the corresponding position
-    this.setState( {columnsWidth: columnsWidth} );    // saves the array of columns width into state (and refresh the whole table)
+    let columnsWidth = this.getState(columnsWidth); // gets the array of the columns width
+    columnsWidth[index] = columnsWidth; // updates the value in the corresponding position
+    this.setState({ columnsWidth: columnsWidth }); // saves the array of columns width into state (and refresh the whole table)
 
     return columnWidth;
   }
@@ -73,9 +72,70 @@ class ForteTable extends React.Component {
    * @param rowId
    * @param rowIndex
    */
-  setActiveRow = (rowId, rowIndex) => {
-    this.activeRowId = rowId;
-    this.rowIndex = rowIndex;
+  // setActiveRow = (rowId, rowIndex) => {
+  //   this.activeRowId = rowId;
+  //   this.rowIndex = rowIndex;
+  // };
+
+  setActiveCell = cell => {
+    this.setState({
+      activeCell: cell,
+      activeRowIndex: cell.props.rowIndex,
+      activeColIndex: cell.props.columnIndex,
+    });
+  };
+
+  onSelectionDragStart = cell => {
+    this.dragStartCells = {
+      col: cell.props.columnIndex,
+      row: cell.props.rowIndex,
+    };
+    let selectedRows = {};
+    selectedRows[cell.props.rowIndex] = {}; // [this.dragStartCells];
+
+    this.setState({ selectedCells: selectedRows });
+    return false;
+  };
+
+  onSelectionDragMove = cell => {
+    if (!this.dragStartCells)
+      // if there is no drag started, exits
+      return;
+
+    let selectedRows = {}; // empties the selected value
+
+    // defines start and end coordinates: end should be > than start.
+    // takes the min coordinates from starting cell and pointed cell
+    let startCoord = {
+      col: Math.min(this.dragStartCells.col, cell.props.columnIndex),
+      row: Math.min(this.dragStartCells.row, cell.props.rowIndex),
+    };
+    // takes the max coordinates from starting cell and pointed cell
+    let endCoord = {
+      col: Math.max(this.dragStartCells.col, cell.props.columnIndex),
+      row: Math.max(this.dragStartCells.row, cell.props.rowIndex),
+    };
+
+    // TODO: checks if useful
+    // if drag selection ends where started, clears entire selection (?)
+    // if( startCoord.col === endCoord.col && startCoord.row === endCoord.row ){
+    //   this.setState( {selectedCells: []} );
+    //   return true;
+    // }
+
+    for (let r = startCoord.row; r <= endCoord.row; r++) {
+      selectedRows[r] = {};
+      for (let c = startCoord.col; c <= endCoord.col; c++) {
+        selectedRows[r][c] = { col: c, row: r };
+      }
+    }
+
+    this.setState({ selectedCells: selectedRows });
+    return false;
+  };
+
+  onSelectionDragEnd = cell => {
+    this.dragStartCells = false;
   };
 
   /**Renders ForteDataGrid component.
@@ -91,7 +151,7 @@ class ForteTable extends React.Component {
       <TableHeader
         columns={this.props.columns}
         headColRender={this.props.headColRender}
-        onColumnHeaderClick={this.props.onColumnHeaderClick || ((index)=>{}) }
+        onColumnHeaderClick={this.props.onColumnHeaderClick || (index => {})}
         // changeSortColumn={this.changeSortColumn}
         sorting={this.state.sorting}
         loggedUser={this.props.loggedUser}
@@ -110,8 +170,11 @@ class ForteTable extends React.Component {
         headRowRender={this.props.headRowRender}
         tableController={this.state.tableController}
         getTableController={this.props.getTableController}
-        type={this.props.type ? this.props.type : "small"}
+        type={this.props.type ? this.props.type : 'small'}
         setActiveRow={this.setActiveRow}
+        setActiveCell={this.setActiveCell}
+        activeRowIndex={this.state.activeRowIndex}
+        activeColIndex={this.state.activeColIndex}
         onCellClick={this.props.onCellClick}
         onCellDoubleClick={this.props.onCellDoubleClick}
         onCellMouseDown={this.props.onCellMouseDown}
@@ -119,11 +182,14 @@ class ForteTable extends React.Component {
         onCellMouseUp={this.props.onCellMouseUp}
         onCellKeyDown={this.props.onCellKeyDown}
         onCellKeyUp={this.props.onCellKeyUp}
-
+        selectedCells={this.state.selectedCells}
+        onSelectionDragStart={this.onSelectionDragStart}
+        onSelectionDragMove={this.onSelectionDragMove}
+        onSelectionDragEnd={this.onSelectionDragEnd}
         newRow={this.props.newRow}
       />
     );
-    const tableFooter = "";
+    const tableFooter = '';
 
     return (
       <div
