@@ -1,7 +1,7 @@
 .ft-cell__container {
   display: table-cell;
   position: relative;
-  //padding-left: 4px;
+  /*padding-left: 4px;*/
   min-width: 150px;
   max-width: 150px;
   white-space: nowrap;
@@ -22,10 +22,10 @@
 
 .ft-cell__container--active {
   border: 1px double #108ee9;
-  //min-width: 150px;
-  //max-width: 150px;
-  //margin-left: -1px;
-  //background-color: #fff;
+  /*  min-width: 150px;
+  max-width: 150px;
+  margin-left: -1px;
+  background-color: #fff;*/
   position: relative;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .ft-cell__content--active--readonly {
-  //padding: 4px;
+  /*padding: 4px;*/
   color: #919191;
   background-color: #eeeeee;
   margin: -4px;
