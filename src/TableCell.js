@@ -152,8 +152,8 @@ class TableCell extends React.Component {
     let className =
       // this.state.isSelected || this.state.input // ft-cell__container ft-cell__container--active
       this.props.isActive
-        ? 'ft-cell__container ft-cell__container--active disable-selection'
-        : 'ft-cell__container ft-cell__container--normal disable-selection';
+        ? 'ft-cell__container ft-cell__container--active'
+        : 'ft-cell__container ft-cell__container--normal';
     if (this.props.cellClassName)
       className = this.props.cellClassName(
         className,
@@ -171,9 +171,8 @@ class TableCell extends React.Component {
     style.minWidth = this.props.columnWidth;
     style.maxWidth = this.props.columnWidth;
 
-    if (this.props.isSelected )
-      //&& !this.props.isActive)
-        style.backgroundColor = '#BFBFFF';
+    if (this.props.isSelected && !this.props.isActive)
+      style.backgroundColor = '#BFBFFF';
 
     return (
       <div
