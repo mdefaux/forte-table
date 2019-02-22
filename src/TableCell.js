@@ -2,11 +2,11 @@ import React from 'react';
 import '../styles/table-cell.css';
 
 class TableCell extends React.Component {
-  // state = {
-  //   input: false,
-  //   tempContent: undefined, // TODO: handle edit mode
-  //   isValid: true, // TODO: handle valid value
-  // };
+  state = {
+    //   input: false,
+    //   tempContent: undefined, // TODO: handle edit mode
+    //   isValid: true, // TODO: handle valid value
+  };
 
   cellController = null;
 
@@ -45,6 +45,9 @@ class TableCell extends React.Component {
   //     this.props.setActiveRow();
   //   }
   // };
+  setActive() {
+    this.props.setActiveCell(this);
+  }
 
   onClick = e => {
     if (this.props.onCellClick)
@@ -55,7 +58,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
-    this.props.setActiveCell(this);
+    this.setActive();
   };
   onDoubleClick = e => {
     if (this.props.onCellDoubleClick)
