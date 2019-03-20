@@ -29,15 +29,17 @@ class TableCell extends React.Component {
    * @param nextProps - properties to be set
    * @returns {boolean} true if the row is been selected and wan not, or viceversa.
    */
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.props.isActive ||
-      nextProps.isActive ||
-      this.props.isSelected ||
-      nextProps.isSelected // ||
-      // nextState.hover !== this.state.hover
-    );
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return (
+  //     this.props.rowActive ||
+  //     nextProps.rowActive ||
+  //     this.props.isActive ||
+  //     nextProps.isActive ||
+  //     this.props.isSelected ||
+  //     nextProps.isSelected // ||
+  //     // nextState.hover !== this.state.hover
+  //   );
+  // }
 
   // setSelected = toBeSelected => {
   //   this.setState({ isSelected: toBeSelected });
@@ -141,7 +143,7 @@ class TableCell extends React.Component {
     let content = ' ';
 
     // if (this.hasController() && this.state.input) {
-    //   content = this.getController().getContent(
+    //   content = this.getController().getInputComponent(
     //     this.props.column,
     //     this.props.row,
     //     this
@@ -174,9 +176,10 @@ class TableCell extends React.Component {
     style.minWidth = this.props.columnWidth;
     style.maxWidth = this.props.columnWidth;
 
-    if (this.props.isSelected )
+    // sets background color for selected cells
+    if (this.props.isSelected)
       //&& !this.props.isActive)
-        style.backgroundColor = '#BFBFFF';
+      style.backgroundColor = '#BFBFFF';
 
     return (
       <div
@@ -188,7 +191,7 @@ class TableCell extends React.Component {
         onMouseDown={this.onMouseDown}
         onMouseMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}
-        onKeyDown={this.onKeyDown}
+        // onKeyDown={this.onKeyDown}
         onKeyUp={this.onKeyUp}
         // onDragStart={(e) => {return !this.props.dragStartSelection(this,e);}}
         // onDrag={(e) => {return !this.props.dragEndSelection(this,e);}}
