@@ -62,8 +62,8 @@ class TableRow extends React.Component {
     }));
   };
 
-  setActiveRow = rowId => {
-    this.props.setActiveRow(rowId, this.props.index);
+  setActiveRow = () => {
+    this.props.setActiveRow(this.props.row, this.props.index);
   };
 
   headRowRender(row) {

@@ -22,10 +22,11 @@ class TableBody extends React.Component {
 
   newRowElement = null;
 
-  setActiveRow = (rowId, rowIndex) => {
-    this.setState({ activeRow: rowId }, function() {
-      this.props.setActiveRow(rowId, rowIndex);
-    });
+  setActiveRow = (row, rowIndex) => {
+    debugger;
+    // this.setState({ activeRow: rowId }, function() {
+    //   this.props.setActiveRow(rowId, rowIndex);
+    // });
   };
 
   render() {

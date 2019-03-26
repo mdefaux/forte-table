@@ -69,20 +69,52 @@ class ForteTable extends React.Component {
 
   /**Sets a row as active. Memorizes the row index and eventually the row id.
    *
-   * @param rowId
-   * @param rowIndex
+   * @param row - the row object corresponding to active row
+   * @param rowIndex - index of the active row
    */
-  // setActiveRow = (rowId, rowIndex) => {
-  //   this.activeRowId = rowId;
-  //   this.rowIndex = rowIndex;
-  // };
+  setActiveRow = (row, rowIndex) => {
+    this.setState({
+      activeRow: row,
+      activeRowIndex: rowIndex,
+    });
 
+    if (this.props.setActiveRow) return this.props.setActiveRow(row, rowIndex);
+  };
+
+  /**Sets a column as active. Memorizes the row index and eventually the row id.
+   *
+   * @param column
+   * @param columnIndex
+   */
+  setActiveColumn = (column, columnIndex) => {
+    this.setState({
+      activeColumn: column,
+      activeColumnIndex: columnIndex,
+    });
+
+    if (this.props.setActiveColumn)
+      return this.props.setActiveColumn(column, columnIndex);
+  };
+
+  /**Sets the active cell. Memorizes the row and column index of the cell.
+   *
+   * @param cell - cell to be activated.
+   */
   setActiveCell = cell => {
     this.setState({
       activeCell: cell,
       activeRowIndex: cell.props.rowIndex,
       activeColIndex: cell.props.columnIndex,
     });
+    this.setActiveRow(cell.props.row, cell.props.rowIndex);
+    this.setActiveColumn(cell.props.column, cell.props.columnIndex);
+
+    if (this.props.setActiveCell)
+      return this.props.setActiveCell(
+        cell,
+        cell.props.columnIndex,
+        cell.props.rowIndex
+      );
   };
 
   onSelectionDragStart = cell => {
@@ -171,7 +203,7 @@ class ForteTable extends React.Component {
         tableController={this.state.tableController}
         getTableController={this.props.getTableController}
         type={this.props.type ? this.props.type : 'small'}
-        setActiveRow={this.setActiveRow}
+        // setActiveRow={this.setActiveRow}
         setActiveCell={this.setActiveCell}
         activeRowIndex={this.state.activeRowIndex}
         activeColIndex={this.state.activeColIndex}
