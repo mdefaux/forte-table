@@ -36,10 +36,7 @@ class TableRow extends React.Component {
     return this.rowController;
   };
 
-  componentWillMount() {
-    // console.log("Row will mount");
-    // this.rowController = this.getController(); // this.props.tableController.createRowController( this, this.props.row );
-  }
+  componentWillMount() {}
 
   /** Prevents Row to be re-rendered if it does not change selection state.
    *
