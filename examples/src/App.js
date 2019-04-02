@@ -6,6 +6,7 @@ import './css/App.css';
 // Importing examples pages
 import LettersXNumbers from './pages/LettersXNumbers';
 import StandardExample from './pages/StandardExample';
+import APIExample from './pages/APIExample';
 
 const defaultPage = {
   pageName: 'Standard Example',
@@ -13,7 +14,7 @@ const defaultPage = {
 };
 
 function ExampleContainer(props) {
-  return <div>{props.link}</div>;
+  return <div style={{ margin: '20px' }}>{props.link}</div>;
 }
 
 class App extends React.Component {
@@ -49,6 +50,10 @@ class App extends React.Component {
             {
               name: 'Letters and Numbers',
               component: <LettersXNumbers />,
+            },
+            {
+              name: 'API Example',
+              component: <APIExample />,
             },
           ]}
           activePage={this.state.pageNum}
