@@ -73,6 +73,9 @@ class TableCell extends React.Component {
       );
   };
   onMouseDown = e => {
+    if (e.button === 1) {
+      return;
+    }
     if (this.props.onCellMouseDown)
       this.props.onCellMouseDown(
         e,
