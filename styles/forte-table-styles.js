@@ -7,7 +7,7 @@
 export default {
   root: {
     // display: 'table',
-    borderCollapse: "collapse",
+    // borderCollapse: "collapse",
     overflow: "auto"
   }
 };
