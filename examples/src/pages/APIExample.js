@@ -79,7 +79,7 @@ export default class APIExample extends React.Component {
                 'ingredients',
               ]}
               cellRender={this.renderCell}
-              defaultColumnWidth='auto'
+              // defaultColumnWidth='auto'
               headRowRender={() => (
                 // Return an empty span to remove the active row selection
                 <span />
