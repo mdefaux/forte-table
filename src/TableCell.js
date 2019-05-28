@@ -84,6 +84,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
+	 this.setActive();
     // e.preventDefault();
     return this.props.onSelectionDragStart(this, e);
   };
