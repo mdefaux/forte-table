@@ -2,9 +2,12 @@
   display: table-cell;
   position: relative;
   /*padding-left: 4px;*/
-  min-width: 150px;
-  max-width: 150px;
+  /* min-width: 150px;
+  max-width: 150px; */
+  text-align: left;
+  padding: 8px;
   white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
   box-sizing: border-box;
   vertical-align: middle;
