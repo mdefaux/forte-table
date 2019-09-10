@@ -49,7 +49,8 @@ class TableRow extends React.Component {
       nextProps.isActive ||
       this.props.isSelected ||
       nextProps.isSelected ||
-      nextState.hover !== this.state.hover
+      nextState.hover !== this.state.hover ||
+      nextProps.index !== this.props.index
     );
   }
 
