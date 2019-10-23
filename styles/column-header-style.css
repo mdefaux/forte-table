@@ -17,14 +17,14 @@
 }
 
 .ft-table--cell__header:hover {
-  color: #108EE9;
+  color: #108ee9;
   cursor: default;
 }
 
 .ft-table--cell__header-container {
-  display: flex;
-  flex-direction: row;
+  display: inline-block;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff;
+  /* background-color: #fff; */
+  height: 100%;
 }
