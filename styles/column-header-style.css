@@ -22,7 +22,7 @@
 }
 
 .ft-table--cell__header-container {
-  display: inline-block;
+  display: inline;
   align-items: center;
   justify-content: space-between;
   /* background-color: #fff; */
