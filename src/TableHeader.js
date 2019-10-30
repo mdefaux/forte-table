@@ -7,13 +7,15 @@ class TableHeader extends React.Component {
   render() {
     const headers = this.props.columns().map((col, index) => (
       <ColumnHeader
-        key={index}
+        // key={index}
+        key={col.name}
         index={index}
         headColRender={this.props.headColRender}
         column={col}
         onColumnHeaderClick={this.props.onColumnHeaderClick}
         onColumnWidth={this.props.onColumnWidth}
-        columnWidth={this.props.columnsWidth[index]}
+        columnWidth={col.userColumnWidth || col.defaultColumnWidth}
+        // columnWidth={this.props.columnsWidth[index]}
         // changeSortColumn={this.props.changeSortColumn}
         // sorting={this.props.sorting}
       />
