@@ -123,7 +123,7 @@ class TableRow extends React.Component {
       return (
         <TableCell
           // key={index}
-          key={col.name}
+          key={column.name}
           index={index}
           rowId={this.props.rowId}
           activeRow={this.props.isActive}
@@ -152,7 +152,7 @@ class TableRow extends React.Component {
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}
           // columnWidth={this.props.columnsWidth[index]}
-          columnWidth={col.userColumnWidth || col.defaultColumnWidth}
+          columnWidth={column.userColumnWidth || column.defaultColumnWidth}
           getRowController={this.getController}
         />
       );
