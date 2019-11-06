@@ -153,7 +153,7 @@ class TableRow extends React.Component {
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}
           // columnWidth={this.props.columnsWidth[index]}
-          columnWidth={column.userColumnWidth || column.defaultColumnWidth}
+          columnWidth={column.userColumnWidth || column.defaultColumnWidth || 80}
           getRowController={this.getController}
         />
       );
