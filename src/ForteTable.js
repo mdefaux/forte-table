@@ -136,7 +136,7 @@ class ForteTable extends React.Component {
 
     let selectedRows = {}; // empties the selected value
 
-    // defines start and end coordinates: end should be > than start.
+    // defines start and end coordinates: end coords should be > than start.
     // takes the min coordinates from starting cell and pointed cell
     let startCoord = {
       col: Math.min(this.dragStartCells.col, cell.props.columnIndex),
@@ -148,13 +148,18 @@ class ForteTable extends React.Component {
       row: Math.max(this.dragStartCells.row, cell.props.rowIndex),
     };
 
-    // TODO: checks if useful
+    // Avoids the selection of the single cell when user click and move on the same cell
     // if drag selection ends where started, clears entire selection (?)
-    // if( startCoord.col === endCoord.col && startCoord.row === endCoord.row ){
-    //   this.setState( {selectedCells: []} );
-    //   return true;
-    // }
+    if( startCoord.col === endCoord.col && startCoord.row === endCoord.row ){
+      this.setState( {
+        selectedCells: [],
+        selectedStartCoord: false,
+        selectedEndCoord: false
+      } );
+      return true;
+    }
 
+    // fills the array of selected rows with an array of selected cells
     for (let r = startCoord.row; r <= endCoord.row; r++) {
       selectedRows[r] = {};
       for (let c = startCoord.col; c <= endCoord.col; c++) {
@@ -162,7 +167,23 @@ class ForteTable extends React.Component {
       }
     }
 
-    this.setState({ selectedCells: selectedRows });
+    // checks if nothing has varied
+    if( this.state.selectedStartCoord 
+      && this.state.selectedStartCoord.col === startCoord.col 
+      && this.state.selectedStartCoord.row === startCoord.row
+      && this.state.selectedEndCoord
+      && this.state.selectedEndCoord.col === endCoord.col 
+      && this.state.selectedEndCoord.row === endCoord.row )
+    {
+      return false;
+    }
+
+    // stores the selction coordinates in state and refresh the rendering of whole table
+    this.setState({ 
+      selectedCells: selectedRows,
+      selectedStartCoord: startCoord,
+      selectedEndCoord: endCoord
+    });
     return false;
   };
 
