@@ -14,7 +14,7 @@ class TableHeader extends React.Component {
         column={col}
         onColumnHeaderClick={this.props.onColumnHeaderClick}
         onColumnWidth={this.props.onColumnWidth}
-        columnWidth={col.userColumnWidth || col.defaultColumnWidth}
+        columnWidth={col.userColumnWidth || col.defaultColumnWidth || 150}
         // columnWidth={this.props.columnsWidth[index]}
         // changeSortColumn={this.props.changeSortColumn}
         // sorting={this.props.sorting}
