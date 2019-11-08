@@ -125,7 +125,11 @@ class ForteTable extends React.Component {
     let selectedRows = {};
     selectedRows[cell.props.rowIndex] = {}; // [this.dragStartCells];
 
-    this.setState({ selectedCells: selectedRows });
+    this.setState({ 
+      selectedCells: selectedRows,
+      selectedStartCoord: false,
+      selectedEndCoord: false 
+    });
     return false;
   };
 
@@ -189,6 +193,29 @@ class ForteTable extends React.Component {
 
   onSelectionDragEnd = cell => {
     this.dragStartCells = false;
+
+    if( this.props.onCellSelectionChange )
+      this.props.onCellSelectionChange( this.getSelectedColumns(), this.getSelectedRows() );
+  };
+
+  getSelectedColumns = () => {
+    if( !this.state.selectedStartCoord )
+      return [];
+
+    let columns = this.props.columns();
+
+    // returns a subset copy of the array from start selection to end selection
+    return columns.slice( this.state.selectedStartCoord.col, this.state.selectedEndCoord.col+1 ) ;
+  };
+
+  getSelectedRows = () => {
+    if( !this.state.selectedStartCoord )
+      return [];
+
+    let rows = this.props.rows();
+
+    // returns a subset copy of the array from start selection to end selection
+    return rows.slice( this.state.selectedStartCoord.row, this.state.selectedEndCoord.row+1 ) ;
   };
 
   /**Renders ForteDataGrid component.

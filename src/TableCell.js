@@ -182,8 +182,11 @@ class TableCell extends React.Component {
 
     // sets background color for selected cells
     if (this.props.isSelected)
+    {
       //&& !this.props.isActive)
       style.backgroundColor = '#BFBFFF';
+      className += ' ft-cell-selected';
+    }
 
     return (
       <div
