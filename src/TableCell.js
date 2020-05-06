@@ -161,7 +161,11 @@ class TableCell extends React.Component {
     let className =
       // this.state.isSelected || this.state.input // ft-cell__container ft-cell__container--active
       this.props.isActive
-        ? 'ft-cell__container ft-cell__container--active disable-selection'
+      ? this.props.column.type == 'checkbox'
+        ? 'ft-cell__container '
+        : 'ft-cell__container ft-cell__container--active disable-selection'
+      : this.props.column.type == 'checkbox'
+        ? 'ft-cell__container '
         : 'ft-cell__container ft-cell__container--normal disable-selection';
     if (this.props.cellClassName)
       className = this.props.cellClassName(
