@@ -40,6 +40,16 @@ class TableCell extends React.Component {
   //     // nextState.hover !== this.state.hover
   //   );
   // }
+  componentWillReceiveProps(nextProps, nextState) {
+    if (!this.props.isActive && nextProps.isActive) {
+      //
+      if (this.ref) {
+        let a = 0;
+        // this.ref.focus();
+      }
+      this.props.notifyActiveCell(this);
+    }
+  }
 
   // setSelected = toBeSelected => {
   //   this.setState({ isSelected: toBeSelected });
@@ -84,7 +94,7 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
-	 this.setActive();
+    this.setActive();
     // e.preventDefault();
     return this.props.onSelectionDragStart(this, e);
   };
@@ -111,6 +121,7 @@ class TableCell extends React.Component {
     this.props.onSelectionDragEnd(this, e);
   };
   onKeyDown = evt => {
+    // debugger;
     evt = evt || window.event;
     if (this.props.onCellKeyDown)
       this.props.onCellKeyDown(
@@ -120,11 +131,18 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
+    // if( evt.keyCode === 9 )
+    // {
+    //   debugger;
+    //   // this.props.setActiveNext(1);
+    //   evt.preventDefault();
+    // }
   };
   onKeyUp = evt => {
+    // debugger;
     evt = evt || window.event;
     // console.log(evt.which);
-    if (this.props.onCellKeyUp)
+    if (this.props.onCellKeyUp) {
       this.props.onCellKeyUp(
         evt,
         this.props.column,
@@ -132,6 +150,12 @@ class TableCell extends React.Component {
         this.props.model,
         this
       );
+    }
+    // if( evt.keyCode === 9 )
+    // {
+    //   debugger;
+    //   this.props.setActiveNext(1);
+    // }
   };
 
   // getStyle() {
@@ -145,6 +169,7 @@ class TableCell extends React.Component {
 
   render() {
     let content = ' ';
+    let tabIndex = this.props.columnIndex + this.props.rowIndex * 100 + 100;
 
     // if (this.hasController() && this.state.input) {
     //   content = this.getController().getInputComponent(
@@ -161,12 +186,12 @@ class TableCell extends React.Component {
     let className =
       // this.state.isSelected || this.state.input // ft-cell__container ft-cell__container--active
       this.props.isActive
-      ? this.props.column.nobordercell
-        ? 'ft-cell__container '
-        : 'ft-cell__container ft-cell__container--active disable-selection'
-      : this.props.column.nobordercell
-        ? 'ft-cell__container '
-        : 'ft-cell__container ft-cell__container--normal disable-selection';
+        ? this.props.column.nobordercell
+          ? 'ft-cell__container '
+          : 'ft-cell__container ft-cell__container--active disable-selection'
+        : this.props.column.nobordercell
+          ? 'ft-cell__container '
+          : 'ft-cell__container ft-cell__container--normal disable-selection';
     if (this.props.cellClassName)
       className = this.props.cellClassName(
         className,
@@ -185,8 +210,7 @@ class TableCell extends React.Component {
     style.maxWidth = this.props.columnWidth;
 
     // sets background color for selected cells
-    if (this.props.isSelected)
-    {
+    if (this.props.isSelected) {
       //&& !this.props.isActive)
       style.backgroundColor = '#BFBFFF';
       className += ' ft-cell-selected';
@@ -196,17 +220,18 @@ class TableCell extends React.Component {
       <div
         className={className}
         style={style}
-        tabIndex={1}
+        // tabIndex={tabIndex}
         onClick={this.onClick}
         onDoubleClick={this.onDoubleClick}
         onMouseDown={this.onMouseDown}
         onMouseMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}
-        // onKeyDown={this.onKeyDown}
+        onKeyDown={this.onKeyDown}
         onKeyUp={this.onKeyUp}
         // onDragStart={(e) => {return !this.props.dragStartSelection(this,e);}}
         // onDrag={(e) => {return !this.props.dragEndSelection(this,e);}}
         draggable={false}
+        ref={ref => (this.ref = ref)}
       >
         {content}
       </div>
