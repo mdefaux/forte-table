@@ -44,7 +44,7 @@ class ForteTable extends React.Component {
    * @param headerComponent - the headerColumn component that has been sized.
    * @return {*} the new value of the column width, eventually modified by a custom callback.
    */
-  onColumnWidth(columnWidth, index, headerComponent) {
+  onColumnWidth = (columnWidth, index, headerComponent) => {
     let column = this.props.columns()[index];
 
     if (this.props.onColumnWidth)
@@ -55,12 +55,12 @@ class ForteTable extends React.Component {
       );
 
     // updates the state... and redraws the table
-    let columnsWidth = this.getState(columnsWidth); // gets the array of the columns width
-    columnsWidth[index] = columnsWidth; // updates the value in the corresponding position
+    let columnsWidth = this.state.columnsWidth; // gets the array of the columns width
+    columnsWidth[index] = columnWidth; // updates the value in the corresponding position
     this.setState({ columnsWidth: columnsWidth }); // saves the array of columns width into state (and refresh the whole table)
 
     return columnWidth;
-  }
+  };
 
   /** Checks if new row is to be rendered
    *

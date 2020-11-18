@@ -15,7 +15,7 @@ import styles from '../styles/table-row-styles';
  *
  */
 
-class TableRow extends React.Component {
+class TableRow extends React.PureComponent {
   state = {
     isValid: true, // / true if the record has valid data, false if there is some error. False prevent record to be saved
     _loading: false,
@@ -43,16 +43,16 @@ class TableRow extends React.Component {
    * @param nextProps - properties to be set
    * @returns {boolean} true if the row is been selected and wan not, or viceversa.
    */
-  shouldComponentUpdate(nextProps, nextState) {
-    return (
-      this.props.isActive ||
-      nextProps.isActive ||
-      this.props.isSelected ||
-      nextProps.isSelected ||
-      nextState.hover !== this.state.hover ||
-      nextProps.index !== this.props.index
-    );
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return (
+  //     this.props.isActive ||
+  //     nextProps.isActive ||
+  //     this.props.isSelected ||
+  //     nextProps.isSelected ||
+  //     nextState.hover !== this.state.hover ||
+  //     nextProps.index !== this.props.index
+  //   );
+  // }
 
   handleRowHover = () => {
     this.setState(prevState => ({
@@ -77,7 +77,9 @@ class TableRow extends React.Component {
           borderLeft:
             this.props.isActive && !this.props.newRow
               ? '3px solid #108ee9'
-              : this.props.newRow ? '3px solid #00a854' : '',
+              : this.props.newRow
+              ? '3px solid #00a854'
+              : '',
         }}
       >
         {this.state.id === -1 && !this.state.valid ? (
