@@ -62,6 +62,7 @@ class TableBody extends React.Component {
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
           columnsWidth={this.props.columnsWidth}
+          columnsWidthSum={this.props.columnsWidth.reduce((p, c) => c + p, 0)}
           headRowRender={this.props.headRowRender}
           headers={this.props.headers}
           setActiveRow={this.setActiveRow}
