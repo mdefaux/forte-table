@@ -58,6 +58,7 @@ class TableBody extends React.Component {
           getTableController={this.props.getTableController}
           row={dataRecord}
           columns={this.props.columns}
+          columnCount={this.props.columns().length}
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
