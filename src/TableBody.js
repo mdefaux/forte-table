@@ -51,7 +51,8 @@ class TableBody extends React.Component {
         <TableRow
           isActive={isActive}
           saveData={this.props.saveData}
-          key={dataRecord.id ? dataRecord.id : index} // @TODO check key with dataRecord.id
+          // key={dataRecord.id ? dataRecord.id : index} // @TODO check key with dataRecord.id
+          key={index} // @TODO check key with dataRecord.id
           rowId={dataRecord.id}
           index={index}
           tableController={this.props.tableController}
