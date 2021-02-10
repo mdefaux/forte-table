@@ -13,7 +13,7 @@
 }
 
 .ft-table--header--content {
-  min-width: 30px;
+  min-width: 50px;
   height: 40px;
   background-color: white;
 }
