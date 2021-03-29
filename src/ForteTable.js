@@ -387,6 +387,7 @@ class ForteTable extends React.Component {
         onSelectionDragEnd={this.onSelectionDragEnd}
         newRow={this.props.newRow}
         notifyActiveCell={this.notifyActiveCell}
+        readOnly={this.props.readOnly}
       />
     );
     const tableFooter = '';

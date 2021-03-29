@@ -89,6 +89,7 @@ class TableBody extends React.Component {
           checkNewRow={this.props.newRow}
           loggedUser={this.props.loggedUser}
           notifyActiveCell={this.props.notifyActiveCell}
+          readOnly={this.props.readOnly}
         />
       );
     });
