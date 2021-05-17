@@ -73,7 +73,7 @@ class TableRow extends React.PureComponent {
           alignItems: 'center',
           justifyContent: 'center',
           minWidth: '29px',
-          height: styles.selectHeight(this.props.type),
+          height: this.props.row.forteHeight ? this.props.row.forteHeight + 'px' : styles.selectHeight(this.props.type),
           borderLeft:
             this.props.isActive && !this.props.newRow
               ? '3px solid #108ee9'
@@ -123,6 +123,11 @@ class TableRow extends React.PureComponent {
       );
       let isActive = this.props.isActive && index === this.props.activeColIndex;
 
+      let forteWidth;
+      if ( this.props.row.forteWidth && column === "value") {
+        forteWidth = this.props.row.forteWidth;
+      }
+
       return (
         <TableCell
           // key={index}
@@ -156,7 +161,7 @@ class TableRow extends React.PureComponent {
           onSelectionDragEnd={this.props.onSelectionDragEnd}
           // columnWidth={this.props.columnsWidth[index]}
           columnWidth={
-            column.userColumnWidth || column.defaultColumnWidth || 150
+            column.userColumnWidth || column.defaultColumnWidth || forteWidth || 150
           }
           getRowController={this.getController}
           notifyActiveCell={this.props.notifyActiveCell}

@@ -395,6 +395,7 @@ class ForteTable extends React.Component {
     return (
       <div
         style={this.props.style}
+        className="forteTableContainer"
         onKeyDown={this.onKeyDown}
         ref={b => {
           this.tableBody = b;
