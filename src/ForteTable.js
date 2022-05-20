@@ -182,6 +182,46 @@ class ForteTable extends React.Component {
         newRowIndex = rowsCount - 1;
       }
     }
+    this.setActiveCoords( newColIndex, newRowIndex );
+  }
+
+  goLeft( toEnd, selection )
+  {
+    if( this.props.columnIndex === 0 )
+      return;
+    let newCoord = toEnd ? 0 : this.state.activeColIndex - 1;
+    this.setActiveCoords( newCoord, this.state.activeRowIndex );
+  }
+
+  goRight( toEnd, selection )
+  {
+    let newCoord = toEnd ? this.getColsCount() -1 : this.state.activeColIndex + 1;
+    this.setActiveCoords( newCoord, this.state.activeRowIndex );
+  }
+
+  goUp( toEnd, selection )
+  {
+    let newCoord = toEnd ? 0 : this.state.activeRowIndex - 1;
+    this.setActiveCoords( this.state.activeColIndex, newCoord );
+  }
+
+  goDown( toEnd, selection )
+  {
+    let newCoord = toEnd ? this.getRowsCount() -1 : this.state.activeRowIndex + 1;
+    this.setActiveCoords( this.state.activeColIndex, newCoord );
+  }
+
+  /**Sets the active cell. Memorizes the row and column index of the cell.
+   *
+   * @param cell - cell to be activated.
+   */
+  setActiveCoords( newColIndex, newRowIndex ) {
+    // if out of range, does nothing
+    if (newColIndex >= this.getColsCount() || newColIndex < 0 
+      || newRowIndex >= this.getRowsCount() || newRowIndex < 0 ) 
+    {
+      return;
+    }
 
     this.setState({
       // activeCell: cell,
@@ -320,19 +360,19 @@ class ForteTable extends React.Component {
     }
     if (evt.key === 'ArrowUp') {
       // up arrow
-      // this.props.setActiveNext(1);
+      this.goUp( evt.ctrlKey );
     }
     if (evt.key === 'ArrowRight') {
-      // up arrow
-      // this.props.setActiveNext(1);
+      // right arrow
+      this.goRight( evt.ctrlKey );
     }
     if (evt.key === 'ArrowDown') {
-      // up arrow
-      // this.props.setActiveNext(1);
+      // down arrow
+      this.goDown( evt.ctrlKey );
     }
     if (evt.key === 'ArrowLeft') {
-      // up arrow
-      // this.props.setActiveNext(1);
+      // left arrow
+      this.goLeft( evt.ctrlKey );
     }
   };
 
