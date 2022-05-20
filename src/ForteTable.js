@@ -185,30 +185,72 @@ class ForteTable extends React.Component {
     this.setActiveCoords( newColIndex, newRowIndex );
   }
 
+  startSelectionAt( colIndex, rowIndex ) {
+    
+    this.dragStartCells = {
+      col: colIndex,
+      row: rowIndex,
+    };  
+  }
+
+
   goLeft( toEnd, selection )
   {
     if( this.props.columnIndex === 0 )
       return;
+      
+    if( selection && !this.dragStartCells ) {
+      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
+    }
     let newCoord = toEnd ? 0 : this.state.activeColIndex - 1;
     this.setActiveCoords( newCoord, this.state.activeRowIndex );
+
+    if( selection ) {
+      this.onSelectionDragMoveAt( newCoord, this.state.activeRowIndex );
+      this.onSelectionDragEnd();
+    }
   }
 
   goRight( toEnd, selection )
   {
+    if( selection && !this.dragStartCells ) {
+      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
+    }
     let newCoord = toEnd ? this.getColsCount() -1 : this.state.activeColIndex + 1;
     this.setActiveCoords( newCoord, this.state.activeRowIndex );
+
+    if( selection ) {
+      this.onSelectionDragMoveAt( newCoord, this.state.activeRowIndex );
+      this.onSelectionDragEnd();
+    }
   }
 
   goUp( toEnd, selection )
   {
+    if( selection && !this.dragStartCells ) {
+      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
+    }
     let newCoord = toEnd ? 0 : this.state.activeRowIndex - 1;
     this.setActiveCoords( this.state.activeColIndex, newCoord );
+
+    if( selection ) {
+      this.onSelectionDragMoveAt( this.state.activeColIndex, newCoord );
+      this.onSelectionDragEnd();
+    }
   }
 
   goDown( toEnd, selection )
   {
+    if( selection && !this.dragStartCells ) {
+      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
+    }
     let newCoord = toEnd ? this.getRowsCount() -1 : this.state.activeRowIndex + 1;
     this.setActiveCoords( this.state.activeColIndex, newCoord );
+
+    if( selection ) {
+      this.onSelectionDragMoveAt( this.state.activeColIndex, newCoord );
+      this.onSelectionDragEnd();
+    }
   }
 
   /**Sets the active cell. Memorizes the row and column index of the cell.
@@ -228,15 +270,6 @@ class ForteTable extends React.Component {
       activeRowIndex: newRowIndex,
       activeColIndex: newColIndex,
     });
-    // this.setActiveRow(cell.props.row, cell.props.rowIndex);
-    // this.setActiveColumn(cell.props.column, cell.props.columnIndex);
-
-    // if (this.props.setActiveCell)
-    //   return this.props.setActiveCell(
-    //     cell,
-    //     cell.props.columnIndex,
-    //     cell.props.rowIndex
-    //   );
   };
 
   onSelectionDragStart = cell => {
@@ -248,6 +281,7 @@ class ForteTable extends React.Component {
     selectedRows[cell.props.rowIndex] = {}; // [this.dragStartCells];
 
     this.setState({
+      mouseDragging: true,
       selectedCells: selectedRows,
       selectedStartCoord: false,
       selectedEndCoord: false,
@@ -256,22 +290,26 @@ class ForteTable extends React.Component {
   };
 
   onSelectionDragMove = cell => {
-    if (!this.dragStartCells)
+    if (!this.dragStartCells || !this.state.mouseDragging)
       // if there is no drag started, exits
       return;
 
+    this.onSelectionDragMoveAt(cell.props.columnIndex, cell.props.rowIndex);
+  };
+
+  onSelectionDragMoveAt(columnIndex, rowIndex, optStartCol, optStartRow ) {
     let selectedRows = {}; // empties the selected value
 
     // defines start and end coordinates: end coords should be > than start.
     // takes the min coordinates from starting cell and pointed cell
     let startCoord = {
-      col: Math.min(this.dragStartCells.col, cell.props.columnIndex),
-      row: Math.min(this.dragStartCells.row, cell.props.rowIndex),
+      col: Math.min( optStartCol || this.dragStartCells.col, columnIndex),
+      row: Math.min( optStartRow || this.dragStartCells.row, rowIndex),
     };
     // takes the max coordinates from starting cell and pointed cell
     let endCoord = {
-      col: Math.max(this.dragStartCells.col, cell.props.columnIndex),
-      row: Math.max(this.dragStartCells.row, cell.props.rowIndex),
+      col: Math.max( optStartCol || this.dragStartCells.col, columnIndex),
+      row: Math.max( optStartRow ||this.dragStartCells.row, rowIndex),
     };
 
     // Avoids the selection of the single cell when user click and move on the same cell
@@ -305,7 +343,7 @@ class ForteTable extends React.Component {
       return false;
     }
 
-    // stores the selction coordinates in state and refresh the rendering of whole table
+    // stores the selection coordinates in state and refresh the rendering of whole table
     this.setState({
       selectedCells: selectedRows,
       selectedStartCoord: startCoord,
@@ -315,13 +353,16 @@ class ForteTable extends React.Component {
   };
 
   onSelectionDragEnd = cell => {
-    this.dragStartCells = false;
 
-    if (this.props.onCellSelectionChange)
-      this.props.onCellSelectionChange(
-        this.getSelectedColumns(),
-        this.getSelectedRows()
-      );
+    this.setState( {mouseDragging: false}, () => {
+
+      if (this.props.onCellSelectionChange) {
+        this.props.onCellSelectionChange(
+          this.getSelectedColumns(),
+          this.getSelectedRows()
+        );
+      }
+    } );
   };
 
   getSelectedColumns = () => {
@@ -360,19 +401,19 @@ class ForteTable extends React.Component {
     }
     if (evt.key === 'ArrowUp') {
       // up arrow
-      this.goUp( evt.ctrlKey );
+      this.goUp( evt.ctrlKey, evt.shiftKey );
     }
     if (evt.key === 'ArrowRight') {
       // right arrow
-      this.goRight( evt.ctrlKey );
+      this.goRight( evt.ctrlKey, evt.shiftKey );
     }
     if (evt.key === 'ArrowDown') {
       // down arrow
-      this.goDown( evt.ctrlKey );
+      this.goDown( evt.ctrlKey, evt.shiftKey );
     }
     if (evt.key === 'ArrowLeft') {
       // left arrow
-      this.goLeft( evt.ctrlKey );
+      this.goLeft( evt.ctrlKey, evt.shiftKey );
     }
   };
 
