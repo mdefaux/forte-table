@@ -194,6 +194,28 @@ class ForteTable extends React.Component {
   }
 
 
+  moveCursor( toEnd, selection )
+  {
+    if( this.props.columnIndex === 0 )
+      return;
+      
+    if( selection && !this.dragStartCells ) {
+      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
+    }
+    if( !selection ) {
+      this.dragStartCells = false;
+    }
+
+    let newCoord = toEnd ? 0 : this.state.activeColIndex - 1;
+    this.setActiveCoords( newCoord, this.state.activeRowIndex );
+
+    if( selection ) {
+      this.onSelectionDragMoveAt( newCoord, this.state.activeRowIndex );
+      this.onSelectionDragEnd();
+    }
+  }
+
+
   goLeft( toEnd, selection )
   {
     if( this.props.columnIndex === 0 )
@@ -202,6 +224,10 @@ class ForteTable extends React.Component {
     if( selection && !this.dragStartCells ) {
       this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
     }
+    if( !selection ) {
+      this.dragStartCells = false;
+    }
+
     let newCoord = toEnd ? 0 : this.state.activeColIndex - 1;
     this.setActiveCoords( newCoord, this.state.activeRowIndex );
 
@@ -216,6 +242,10 @@ class ForteTable extends React.Component {
     if( selection && !this.dragStartCells ) {
       this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
     }
+    if( !selection ) {
+      this.dragStartCells = false;
+    }
+
     let newCoord = toEnd ? this.getColsCount() -1 : this.state.activeColIndex + 1;
     this.setActiveCoords( newCoord, this.state.activeRowIndex );
 
@@ -230,6 +260,10 @@ class ForteTable extends React.Component {
     if( selection && !this.dragStartCells ) {
       this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
     }
+    if( !selection ) {
+      this.dragStartCells = false;
+    }
+
     let newCoord = toEnd ? 0 : this.state.activeRowIndex - 1;
     this.setActiveCoords( this.state.activeColIndex, newCoord );
 
@@ -244,6 +278,10 @@ class ForteTable extends React.Component {
     if( selection && !this.dragStartCells ) {
       this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
     }
+    if( !selection ) {
+      this.dragStartCells = false;
+    }
+
     let newCoord = toEnd ? this.getRowsCount() -1 : this.state.activeRowIndex + 1;
     this.setActiveCoords( this.state.activeColIndex, newCoord );
 
