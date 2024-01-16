@@ -8,7 +8,7 @@ class TableHeader extends React.Component {
     const headers = this.props.columns().map((col, index) => (
       <ColumnHeader
         // key={index}
-        key={col.name}
+        key={col.name || `forte-table-header-index#${index}`}
         index={index}
         headColRender={this.props.headColRender}
         column={col}

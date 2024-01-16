@@ -36,7 +36,11 @@ class TableRow extends React.PureComponent {
     return this.rowController;
   };
 
-  componentWillMount() {}
+  componentWillUnmount() {
+    if( typeof this.props.row?.unsubscribe === 'function' ) {
+      this.props.row.unsubscribe( this );
+    }
+  }
 
   /** Prevents Row to be re-rendered if it does not change selection state.
    *
@@ -131,7 +135,7 @@ class TableRow extends React.PureComponent {
       return (
         <TableCell
           // key={index}
-          key={column.name}
+          key={column.name || `forte-row-index#${index}`}
           index={index}
           rowId={this.props.rowId}
           activeRow={this.props.isActive}
