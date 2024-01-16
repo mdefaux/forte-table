@@ -5,7 +5,29 @@ import "../styles/table-header.css";
 
 class TableHeader extends React.Component {
   render() {
-    const headers = this.props.columns().map((col, index) => (
+
+    const fixedCount = 3;
+    const columns = this.props.columns();
+
+    const fixedColumns = columns.slice( 0, fixedCount );
+    const scrollabledColumns = columns;
+
+    const scrollableHeaders = scrollabledColumns.map((col, index) => (
+      <ColumnHeader
+        // key={index}
+        key={col.name}
+        index={index}
+        headColRender={this.props.headColRender}
+        column={col}
+        onColumnHeaderClick={this.props.onColumnHeaderClick}
+        onColumnWidth={this.props.onColumnWidth}
+        columnWidth={col.userColumnWidth || col.defaultColumnWidth || 150}
+        // columnWidth={this.props.columnsWidth[index]}
+        // changeSortColumn={this.props.changeSortColumn}
+        // sorting={this.props.sorting}
+      />
+    ));
+    const fixedHeaders = fixedColumns.map((col, index) => (
       <ColumnHeader
         // key={index}
         key={col.name}
@@ -24,7 +46,20 @@ class TableHeader extends React.Component {
     return (
       <div className="ft-table--header--container">
         <div className="ft-table--header--content" />
-        {headers}
+        <div style={{
+          position: 'absolute',
+          left: '48px'
+        }}>
+
+          {scrollableHeaders}
+        </div>
+        <div style={{
+          position: 'sticky',
+          left: '0px'
+        }}>
+          
+          {fixedHeaders}
+        </div>
       </div>
     );
   }
