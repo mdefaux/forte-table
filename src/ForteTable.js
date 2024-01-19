@@ -455,32 +455,15 @@ class ForteTable extends React.Component {
     }
   };
 
-  /**Renders ForteDataGrid component.
-   * Composes a Toolbar, a table header and a table body.
-   *
-   * @returns {XML}
-   */
-  render() {
-    const width = this.props.tableWidth;
-    const height = this.props.tableheight;
-
-    const tableHeader = (
-      <TableHeader
-        columns={this.props.columns}
-        headColRender={this.props.headColRender}
-        onColumnHeaderClick={this.props.onColumnHeaderClick || (index => {})}
-        // changeSortColumn={this.changeSortColumn}
-        sorting={this.state.sorting}
-        loggedUser={this.props.loggedUser}
-        onColumnWidth={this.onColumnWidth}
-        columnsWidth={this.state.columnsWidth}
-      />
-    );
-    const tableBody = (
+  renderBody( style = { position: 'absolute' }, columnRangeStart, columnRangeEnd ) {
+    return (
       <TableBody
         rows={this.props.rows}
         rowsCount={this.getRowsCount()}
         columns={this.props.columns}
+        columnRangeStart={columnRangeStart}
+        columnRangeEnd={columnRangeEnd}
+        style={ style }
         cellRender={this.props.cellRender}
         cellStyle={this.props.cellStyle}
         cellClassName={this.props.cellClassName}
@@ -509,11 +492,38 @@ class ForteTable extends React.Component {
         readOnly={this.props.readOnly}
       />
     );
+  }
+
+  /**Renders ForteDataGrid component.
+   * Composes a Toolbar, a table header and a table body.
+   *
+   * @returns {XML}
+   */
+  render() {
+    const width = this.props.tableWidth;
+    const height = this.props.tableheight;
+
+    const tableHeader = (
+      <TableHeader
+        columns={this.props.columns}
+        headColRender={this.props.headColRender}
+        onColumnHeaderClick={this.props.onColumnHeaderClick || (index => {})}
+        // changeSortColumn={this.changeSortColumn}
+        sorting={this.state.sorting}
+        loggedUser={this.props.loggedUser}
+        onColumnWidth={this.onColumnWidth}
+        columnsWidth={this.state.columnsWidth}
+      />
+    );
+    const tableBody = this.renderBody();
+    const tableBodyFixed = this.renderBody( {
+      position: 'sticky', left: '0px', backgroundColor: 'white'},
+      0, 3 );
     const tableFooter = '';
 
     return (
       <div
-        style={this.props.style}
+        style={{...this.props.style, position: 'relative'}}
         className="forteTableContainer"
         onKeyDown={this.onKeyDown}
         ref={b => {
@@ -522,6 +532,7 @@ class ForteTable extends React.Component {
       >
         {tableHeader}
         {tableBody}
+        {tableBodyFixed}
       </div>
     );
   }

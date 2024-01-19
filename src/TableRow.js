@@ -114,7 +114,7 @@ class TableRow extends React.PureComponent {
     // debugger;
     let rowData = row._getData ? row._getData() : row;
 
-    const columns = this.props.columns();
+    const columns = this.props.columns().slice( this.props.columnRangeStart, this.props.columnRangeEnd );
     const cells = columns.map((/*headerModel*/ column, index) => {
       // for each column in the view
       // TODO: copies the model of the field into a local value

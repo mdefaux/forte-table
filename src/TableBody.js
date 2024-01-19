@@ -29,17 +29,12 @@ class TableBody extends React.Component {
     // });
   };
 
-  render() {
-    let rowIndexes = this.props.rows(
-      this.state.range.start,
-      this.state.range.end
-    );
-    const rows = rowIndexes.map((dataRecord, index) => {
+  rowMap(rowIndexes, columnRangeStart, columnRangeEnd) {
+    return rowIndexes.map((dataRecord, index) => {
       // let isActive = false;
       // if (dataRecord.id === this.state.activeRow) {
       //   isActive = true;
       // }
-
       // checks if row is the active one comparing the active row index.
       let isActive = index === this.props.activeRowIndex;
 
@@ -60,6 +55,8 @@ class TableBody extends React.Component {
           row={dataRecord}
           columns={this.props.columns}
           columnCount={this.props.columns().length}
+          columnRangeStart={columnRangeStart}
+          columnRangeEnd={columnRangeEnd}
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
@@ -89,68 +86,36 @@ class TableBody extends React.Component {
           checkNewRow={this.props.newRow}
           loggedUser={this.props.loggedUser}
           notifyActiveCell={this.props.notifyActiveCell}
-          readOnly={this.props.readOnly}
-        />
+          readOnly={this.props.readOnly} />
       );
     });
+  }
 
-    /*
-    if (this.props.newRow) {
-      let newIsActive = false;
-      if (this.state.activeRow === -1) {
-        newIsActive = true;
-      }
-      let newRow = (
-        <TableRow
-          // tableModel={this.props.tableModel}
-          isActive={newIsActive}
-          saveData={this.props.saveData}
-          key={-1}
-          rowId={-1}
-          index={rowIndexes.length}
+  render() {
+    let rowIndexes = this.props.rows(
+      this.state.range.start,
+      this.state.range.end
+    );
 
+    const rows = this.rowMap(rowIndexes, 
+      this.props.columnRangeStart, this.props.columnRangeEnd );
+    // const rows = this.rowMap(rowIndexes);
+    // const fixedRows = this.rowMap(rowIndexes, 0, 3);
 
-          tableController={this.props.tableController}
-          getTableController={this.props.getTableController}
-          // row={dataRecord}
-          columns={this.props.columns}
-          cellRender={this.props.cellRender}
-          headers={this.props.headers}
-          setActiveRow={this.setActiveRow}
+    
+    return <div style={{...styles.root,...this.props.style}}>{rows}</div>;
 
-          onCellClick={this.props.onCellClick}
-          onCellDoubleClick={this.props.onCellDoubleClick}
-          onCellMouseDown={this.props.onCellMouseDown}
-          onCellMouseMove={this.props.onCellMouseMove}
-          onCellMouseUp={this.props.onCellMouseUp}
-          onCellKeyDown={this.props.onCellKeyDown}
-          onCellKeyUp={this.props.onCellKeyUp}
-
-          type={this.props.type}
-          hover={this.props.hover}
-          reload={this.props.reload}
-          checkNewRow={this.props.newRow}
-          loggedUser={this.props.loggedUser}
-
-
-
-          // model={this.props.model}
-          // view={this.props.view}
-          // store={this.props.store}
-          // type={this.props.type}
-          // hover={this.props.hover}
-          newRow={true}
-          // reload={this.props.reload}
-          ref={input => {
-            this.newRowElement = input;
-          }}
-          // loggedUser={this.props.loggedUser}
-        />
-      );
-      rows.push(newRow);
-    }
-    */
-    return <div style={styles.root}>{rows}</div>;
+    // return <div style={{ position: 'relative'}}>
+    // return <div style={{ display:'block' }}>
+    // {/* return <> */}
+    //   <div style={{...styles.root, position: 'absolute', left: '48px', }}>{rows}</div>
+    //   <div style={{ // ...styles.root,
+    //       position: 'sticky',
+    //       left: '0px',
+    //       zIndex: 100,
+    //   }}>{fixedRows}</div>
+    // </div>
+    // </>
   }
 }
 
