@@ -455,7 +455,7 @@ class ForteTable extends React.Component {
     }
   };
 
-  renderBody( style = { position: 'absolute' }, columnRangeStart, columnRangeEnd ) {
+  renderBody( style = { position: 'absolute' }, columnRangeStart, columnRangeEnd, columnInactiveCount ) {
     return (
       <TableBody
         rows={this.props.rows}
@@ -463,6 +463,7 @@ class ForteTable extends React.Component {
         columns={this.props.columns}
         columnRangeStart={columnRangeStart}
         columnRangeEnd={columnRangeEnd}
+        columnInactiveCount={columnInactiveCount}
         style={ style }
         cellRender={this.props.cellRender}
         cellStyle={this.props.cellStyle}
@@ -494,6 +495,22 @@ class ForteTable extends React.Component {
     );
   }
 
+  renderHeader( style, columnRangeStart, columnRangeEnd, columnInactiveCount) {
+    return <TableHeader
+      columns={this.props.columns}
+      columnRangeStart={columnRangeStart}
+      columnRangeEnd={columnRangeEnd}
+      columnInactiveCount={columnInactiveCount}
+      style={ style }
+      headColRender={this.props.headColRender}
+      onColumnHeaderClick={this.props.onColumnHeaderClick || (index => { })}
+      // changeSortColumn={this.changeSortColumn}
+      sorting={this.state.sorting}
+      loggedUser={this.props.loggedUser}
+      onColumnWidth={this.onColumnWidth}
+      columnsWidth={this.state.columnsWidth} />;
+  }
+
   /**Renders ForteDataGrid component.
    * Composes a Toolbar, a table header and a table body.
    *
@@ -502,23 +519,19 @@ class ForteTable extends React.Component {
   render() {
     const width = this.props.tableWidth;
     const height = this.props.tableheight;
+    const columnRangeStart = this.props.columnFixedCount ? 0 : undefined;
+    const columnRangeEnd = this.props.columnFixedCount;
 
-    const tableHeader = (
-      <TableHeader
-        columns={this.props.columns}
-        headColRender={this.props.headColRender}
-        onColumnHeaderClick={this.props.onColumnHeaderClick || (index => {})}
-        // changeSortColumn={this.changeSortColumn}
-        sorting={this.state.sorting}
-        loggedUser={this.props.loggedUser}
-        onColumnWidth={this.onColumnWidth}
-        columnsWidth={this.state.columnsWidth}
-      />
-    );
+    const tableFixedHeader = columnRangeEnd && 
+      this.renderHeader( { left: '0px', top: '-42px', position: 'absolute' }, 
+      columnRangeStart, columnRangeEnd);
+    const tableHeader = this.renderHeader( {}, undefined, undefined, columnRangeEnd );
+
     const tableBody = this.renderBody();
-    const tableBodyFixed = this.renderBody( {
+
+    const tableBodyFixed = columnRangeEnd && this.renderBody( {
       position: 'sticky', left: '0px', backgroundColor: 'white'},
-      0, 3 );
+      columnRangeStart, columnRangeEnd );
     const tableFooter = '';
 
     return (
@@ -531,6 +544,11 @@ class ForteTable extends React.Component {
         }}
       >
         {tableHeader}
+        <div style={{
+          position: "sticky", top: '0px', left: '0px', zIndex: 20
+        }}>
+          {tableFixedHeader}
+        </div>
         {tableBody}
         {tableBodyFixed}
       </div>

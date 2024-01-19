@@ -62,7 +62,7 @@ class ColumnHeader extends React.Component {
   render() {
     let content;
     if (this.props.headColRender)
-      content = this.props.headColRender(this.props.column);
+      content = this.props.headColRender(this.props.column, this);
     else content = this.props.column;
 
     let style = {};

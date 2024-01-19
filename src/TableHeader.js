@@ -4,62 +4,53 @@ import ColumnHeader from "./ColumnHeader";
 import "../styles/table-header.css";
 
 class TableHeader extends React.Component {
+
+  mapColumns(columns) {
+    return columns.map((col, index) => (
+      <ColumnHeader
+        // key={index}
+        key={col.name}
+        index={index}
+        headColRender={this.props.headColRender}
+        column={col}
+        onColumnHeaderClick={this.props.onColumnHeaderClick}
+        onColumnWidth={this.props.onColumnWidth}
+        columnWidth={col.userColumnWidth || col.defaultColumnWidth || 150} 
+        inactive={ this.props.columnInactiveCount && 
+          (index < this.props.columnInactiveCount) }
+      />
+    ));
+  }
+  
   render() {
+    // const columns = this.props.columns();
+    const columns = this.props.columns().slice( this.props.columnRangeStart, this.props.columnRangeEnd );
+    // const fixedColumns = this.props.columns().slice( this.props.columnRangeStart, this.props.columnRangeEnd );
 
-    const fixedCount = 3;
-    const columns = this.props.columns();
-
-    const fixedColumns = columns.slice( 0, fixedCount );
-    const scrollabledColumns = columns;
-
-    const scrollableHeaders = scrollabledColumns.map((col, index) => (
-      <ColumnHeader
-        // key={index}
-        key={col.name}
-        index={index}
-        headColRender={this.props.headColRender}
-        column={col}
-        onColumnHeaderClick={this.props.onColumnHeaderClick}
-        onColumnWidth={this.props.onColumnWidth}
-        columnWidth={col.userColumnWidth || col.defaultColumnWidth || 150}
-        // columnWidth={this.props.columnsWidth[index]}
-        // changeSortColumn={this.props.changeSortColumn}
-        // sorting={this.props.sorting}
-      />
-    ));
-    const fixedHeaders = fixedColumns.map((col, index) => (
-      <ColumnHeader
-        // key={index}
-        key={col.name}
-        index={index}
-        headColRender={this.props.headColRender}
-        column={col}
-        onColumnHeaderClick={this.props.onColumnHeaderClick}
-        onColumnWidth={this.props.onColumnWidth}
-        columnWidth={col.userColumnWidth || col.defaultColumnWidth || 150}
-        // columnWidth={this.props.columnsWidth[index]}
-        // changeSortColumn={this.props.changeSortColumn}
-        // sorting={this.props.sorting}
-      />
-    ));
+    const headers = this.mapColumns(columns);
+    // const fixedHeaders = this.mapColumns(fixedColumns);
 
     return (
-      <div className="ft-table--header--container">
+      <div className="ft-table--header--container" style={this.props.style}>
         <div className="ft-table--header--content" />
         <div style={{
-          position: 'absolute',
+          // position: 'absolute',
           left: '48px'
         }}>
-
-          {scrollableHeaders}
+          {headers}
         </div>
-        <div style={{
+
+
+        {/* <div style={{
           position: 'sticky',
-          left: '0px'
+          left: '0px',
+          zIndex: '200'
         }}>
           
           {fixedHeaders}
-        </div>
+        </div> */}
+
+
       </div>
     );
   }
