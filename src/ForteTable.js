@@ -455,32 +455,16 @@ class ForteTable extends React.Component {
     }
   };
 
-  /**Renders ForteDataGrid component.
-   * Composes a Toolbar, a table header and a table body.
-   *
-   * @returns {XML}
-   */
-  render() {
-    const width = this.props.tableWidth;
-    const height = this.props.tableheight;
-
-    const tableHeader = (
-      <TableHeader
-        columns={this.props.columns}
-        headColRender={this.props.headColRender}
-        onColumnHeaderClick={this.props.onColumnHeaderClick || (index => {})}
-        // changeSortColumn={this.changeSortColumn}
-        sorting={this.state.sorting}
-        loggedUser={this.props.loggedUser}
-        onColumnWidth={this.onColumnWidth}
-        columnsWidth={this.state.columnsWidth}
-      />
-    );
-    const tableBody = (
+  renderBody( style = { position: 'absolute' }, columnRangeStart, columnRangeEnd, columnInactiveCount ) {
+    return (
       <TableBody
         rows={this.props.rows}
         rowsCount={this.getRowsCount()}
         columns={this.props.columns}
+        columnRangeStart={columnRangeStart}
+        columnRangeEnd={columnRangeEnd}
+        columnInactiveCount={columnInactiveCount}
+        style={ style }
         cellRender={this.props.cellRender}
         cellStyle={this.props.cellStyle}
         cellClassName={this.props.cellClassName}
@@ -509,11 +493,50 @@ class ForteTable extends React.Component {
         readOnly={this.props.readOnly}
       />
     );
+  }
+
+  renderHeader( style, columnRangeStart, columnRangeEnd, columnInactiveCount) {
+    return <TableHeader
+      columns={this.props.columns}
+      columnRangeStart={columnRangeStart}
+      columnRangeEnd={columnRangeEnd}
+      columnInactiveCount={columnInactiveCount}
+      style={ style }
+      headColRender={this.props.headColRender}
+      onColumnHeaderClick={this.props.onColumnHeaderClick || (index => { })}
+      // changeSortColumn={this.changeSortColumn}
+      sorting={this.state.sorting}
+      loggedUser={this.props.loggedUser}
+      onColumnWidth={this.onColumnWidth}
+      columnsWidth={this.state.columnsWidth} />;
+  }
+
+  /**Renders ForteDataGrid component.
+   * Composes a Toolbar, a table header and a table body.
+   *
+   * @returns {XML}
+   */
+  render() {
+    const width = this.props.tableWidth;
+    const height = this.props.tableheight;
+    const columnRangeStart = this.props.columnFixedCount ? 0 : undefined;
+    const columnRangeEnd = this.props.columnFixedCount;
+
+    const tableFixedHeader = columnRangeEnd && 
+      this.renderHeader( { left: '0px', top: '-42px', position: 'absolute' }, 
+      columnRangeStart, columnRangeEnd);
+    const tableHeader = this.renderHeader( {}, undefined, undefined, columnRangeEnd );
+
+    const tableBody = this.renderBody();
+
+    const tableBodyFixed = columnRangeEnd && this.renderBody( {
+      position: 'sticky', left: '0px', backgroundColor: 'white'},
+      columnRangeStart, columnRangeEnd );
     const tableFooter = '';
 
     return (
       <div
-        style={this.props.style}
+        style={{...this.props.style, position: 'relative'}}
         className="forteTableContainer"
         onKeyDown={this.onKeyDown}
         ref={b => {
@@ -521,7 +544,13 @@ class ForteTable extends React.Component {
         }}
       >
         {tableHeader}
+        <div style={{
+          position: "sticky", top: '0px', left: '0px', zIndex: 20
+        }}>
+          {tableFixedHeader}
+        </div>
         {tableBody}
+        {tableBodyFixed}
       </div>
     );
   }
