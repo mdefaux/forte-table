@@ -108,7 +108,8 @@ class TableRow extends React.PureComponent {
     // else
     row = this.props.row; // this.getRecord();
 
-    if (row._subscribe) {
+    // subscribes only if this block of cloumns is not fixed TODO: change subscription model
+    if (row._subscribe && !this.props.columnRangeEnd ) {
       row._subscribe(this);
     }
     // debugger;
