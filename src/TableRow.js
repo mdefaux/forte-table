@@ -109,13 +109,13 @@ class TableRow extends React.PureComponent {
     row = this.props.row; // this.getRecord();
 
     // subscribes only if this block of cloumns is not fixed TODO: change subscription model
-    if (row._subscribe && !this.props.columnRangeEnd ) {
+    if (row._subscribe /*&& !this.props.columnRangeEnd*/ ) {
       row._subscribe(this);
     }
     // debugger;
     let rowData = row._getData ? row._getData() : row;
 
-    const columns = this.props.columns().slice( this.props.columnRangeStart, this.props.columnRangeEnd );
+    const columns = this.props.columns(); // .slice( this.props.columnRangeStart, this.props.columnRangeEnd );
     const cells = columns.map((/*headerModel*/ column, index) => {
       // for each column in the view
       // TODO: copies the model of the field into a local value
@@ -128,6 +128,10 @@ class TableRow extends React.PureComponent {
       if ( this.props.row.forteWidth && column === "value") {
         forteWidth = this.props.row.forteWidth;
       }
+
+      let leftPos = columns.slice( 0, index ).reduce( 
+        (acc,col)=> acc+ (col.userColumnWidth || col.defaultColumnWidth || forteWidth || 150),
+         0 );
 
       return (
         <TableCell
@@ -153,6 +157,9 @@ class TableRow extends React.PureComponent {
           rowIndex={this.props.index}
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
+          style={{
+            ...index < this.props.columnRangeEnd ? { position: 'sticky', left: `${leftPos}px`, zIndex: 2, backgroundColor: 'white' } : {}
+          }}
           cellClassName={this.props.cellClassName}
           selectedCells={this.props.selectedCells}
           isSelected={isSelected}

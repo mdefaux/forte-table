@@ -209,6 +209,8 @@ class TableCell extends React.Component {
     style.minWidth = this.props.columnWidth;
     style.maxWidth = this.props.columnWidth;
 
+    style = {...style, ...this.props.style}
+
     // sets background color for selected cells
     if (this.props.isSelected) {
       //&& !this.props.isActive)

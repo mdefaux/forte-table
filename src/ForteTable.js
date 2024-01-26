@@ -528,11 +528,12 @@ class ForteTable extends React.Component {
 
     const tableHeader = this.renderHeader( {}, undefined, undefined, columnRangeEnd );
 
-    const tableBody = this.renderBody( columnRangeEnd && { position: 'absolute' } );
+    // const tableBody = this.renderBody( columnRangeEnd && { position: 'absolute' } );
+    const tableBody = this.renderBody( undefined, columnRangeStart, columnRangeEnd );
 
-    const tableBodyFixed = columnRangeEnd && this.renderBody( {
-      position: 'sticky', left: '0px', backgroundColor: 'white'},
-      columnRangeStart, columnRangeEnd );
+    // const tableBodyFixed = columnRangeEnd && this.renderBody( {
+    //   position: 'sticky', left: '0px', backgroundColor: 'white'},
+    //   columnRangeStart, columnRangeEnd );
     const tableFooter = '';
 
     return (
@@ -551,7 +552,7 @@ class ForteTable extends React.Component {
           {tableFixedHeader}
         </div>
         {tableBody}
-        {tableBodyFixed}
+        {/* {tableBodyFixed} */}
       </div>
     );
   }
