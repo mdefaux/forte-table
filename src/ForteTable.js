@@ -529,7 +529,7 @@ class ForteTable extends React.Component {
     const tableHeader = this.renderHeader( {}, undefined, undefined, columnRangeEnd );
 
     // const tableBody = this.renderBody( columnRangeEnd && { position: 'absolute' } );
-    const tableBody = this.renderBody( undefined, columnRangeStart, columnRangeEnd );
+    const tableBody = this.renderBody( {backgroundColor: 'white'}, columnRangeStart, columnRangeEnd );
 
     // const tableBodyFixed = columnRangeEnd && this.renderBody( {
     //   position: 'sticky', left: '0px', backgroundColor: 'white'},
@@ -538,7 +538,10 @@ class ForteTable extends React.Component {
 
     return (
       <div
-        style={{...this.props.style, position: 'relative'}}
+        style={{
+          // borderCollapse: 'collapse',
+          ...this.props.style, position: 'relative'
+        }}
         className="forteTableContainer"
         onKeyDown={this.onKeyDown}
         ref={b => {

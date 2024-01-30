@@ -16,4 +16,7 @@
   min-width: 50px;
   height: 40px;
   background-color: white;
+  position: sticky;
+  left: 0px;
+  z-index: '3';
 }

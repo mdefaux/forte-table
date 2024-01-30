@@ -131,7 +131,7 @@ class TableRow extends React.PureComponent {
 
       let leftPos = columns.slice( 0, index ).reduce( 
         (acc,col)=> acc+ (col.userColumnWidth || col.defaultColumnWidth || forteWidth || 150),
-         0 );
+         48+4 );
 
       return (
         <TableCell
@@ -158,7 +158,9 @@ class TableRow extends React.PureComponent {
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           style={{
-            ...index < this.props.columnRangeEnd ? { position: 'sticky', left: `${leftPos}px`, zIndex: 2, backgroundColor: 'white' } : {}
+            ...index < this.props.columnRangeEnd ? { 
+              position: 'sticky', left: `${leftPos}px`, zIndex: '2', 
+              backgroundColor: 'white' } : {}
           }}
           cellClassName={this.props.cellClassName}
           selectedCells={this.props.selectedCells}
@@ -190,7 +192,19 @@ class TableRow extends React.PureComponent {
         // onMouseEnter={this.props.hover ? this.handleRowHover : ""}
         // onMouseLeave={this.props.hover ? this.handleRowHover : ""}
       >
-        {headRow}
+        <div style={{
+          position: 'sticky',
+          background: 'white',
+          left: '0px',
+          zIndex: '1',
+          width: '48px',
+          border: 'solid 1px white',
+          display: 'table-cell',
+          // paddingRight: '6px',
+        }}>
+
+          {headRow}
+        </div>
         {cells}
       </div>
     );

@@ -32,13 +32,13 @@ class TableHeader extends React.Component {
 
     return (
       <div className="ft-table--header--container" style={this.props.style}>
-        <div className="ft-table--header--content" />
-        <div style={{
+        <div className="ft-table--header--content"> </div>
+        {/* <div style={{
           // position: 'absolute',
           left: '48px'
-        }}>
+        }}> */}
           {headers}
-        </div>
+        {/* </div> */}
 
 
         {/* <div style={{
