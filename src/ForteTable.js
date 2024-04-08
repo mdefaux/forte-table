@@ -526,7 +526,7 @@ class ForteTable extends React.Component {
       this.renderHeader( { left: '0px', top: '-42px', position: 'absolute' }, 
       columnRangeStart, columnRangeEnd);
 
-    const tableHeader = this.renderHeader( {}, undefined, undefined, columnRangeEnd );
+    const tableHeader = this.renderHeader( {}, undefined, columnRangeEnd, undefined );
 
     // const tableBody = this.renderBody( columnRangeEnd && { position: 'absolute' } );
     const tableBody = this.renderBody( {backgroundColor: 'white'}, columnRangeStart, columnRangeEnd );
@@ -549,11 +549,11 @@ class ForteTable extends React.Component {
         }}
       >
         {tableHeader}
-        <div style={{
+        {/* <div style={{
           position: "sticky", top: '0px', left: '0px', zIndex: 20
         }}>
           {tableFixedHeader}
-        </div>
+        </div> */}
         {tableBody}
         {/* {tableBodyFixed} */}
       </div>

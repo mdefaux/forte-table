@@ -65,7 +65,11 @@ class ColumnHeader extends React.Component {
       content = this.props.headColRender(this.props.column, this);
     else content = this.props.column;
 
-    let style = {};
+    let style = this.props.fixed ? {
+      position: 'sticky',
+      left: `${this.props.left}px`,
+      zIndex: '3'
+    } : {};
 
     style.width = style.minWidth = style.maxWidth = this.state.resized
       ? this.state.columnWidth
