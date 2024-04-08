@@ -179,6 +179,7 @@ class TableRow extends React.PureComponent {
       );
     });
 
+    const isActive = this.props.isActive;
     const headRow = this.props.headRowRender
       ? this.props.headRowRender(row)
       : this.headRowRender(row);
@@ -187,6 +188,10 @@ class TableRow extends React.PureComponent {
       <div
         style={{
           ...styles.root,
+          // active row is over others
+          // so avoid children component to go behind next rows
+          // https://stackoverflow.com/questions/5218927/z-index-not-working-with-fixed-positioning
+          zIndex: isActive ? '2' : '1',
           height: styles.selectHeight(this.props.type),
         }}
         // onMouseEnter={this.props.hover ? this.handleRowHover : ""}
@@ -196,7 +201,6 @@ class TableRow extends React.PureComponent {
           position: 'sticky',
           background: 'white',
           left: '0px',
-          zIndex: '1',
           width: '48px',
           border: 'solid 1px white',
           display: 'table-cell',
