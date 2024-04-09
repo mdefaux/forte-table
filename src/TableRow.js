@@ -197,15 +197,18 @@ class TableRow extends React.PureComponent {
         // onMouseEnter={this.props.hover ? this.handleRowHover : ""}
         // onMouseLeave={this.props.hover ? this.handleRowHover : ""}
       >
-        <div style={{
-          position: 'sticky',
-          background: 'white',
-          left: '0px',
-          width: '48px',
-          border: 'solid 1px white',
-          display: 'table-cell',
-          // paddingRight: '6px',
-        }}>
+        <div className='row-heading'
+          style={{  // row heading
+            position: 'sticky',
+            background: 'white',
+            left: '0px',
+            width: '48px',
+            border: 'solid 1px white',
+            display: 'table-cell',
+            zIndex: 2,
+            // paddingRight: '6px',
+          }}
+        >
 
           {headRow}
         </div>
