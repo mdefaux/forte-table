@@ -22,7 +22,7 @@ class TableCell extends React.Component {
     return this.cellController;
   };
 
-  componentWillMount() {}
+  // componentWillMount() {}
 
   /** Prevents Row to be re-rendered if it does not change selection state.
    *
@@ -40,16 +40,16 @@ class TableCell extends React.Component {
   //     // nextState.hover !== this.state.hover
   //   );
   // }
-  componentWillReceiveProps(nextProps, nextState) {
-    if (!this.props.isActive && nextProps.isActive) {
-      //
-      if (this.ref) {
-        let a = 0;
-        // this.ref.focus();
-      }
-      this.props.notifyActiveCell(this);
-    }
-  }
+  // componentWillReceiveProps(nextProps, nextState) {
+  //   if (!this.props.isActive && nextProps.isActive) {
+  //     //
+  //     if (this.ref) {
+  //       let a = 0;
+  //       // this.ref.focus();
+  //     }
+  //     this.props.notifyActiveCell(this);
+  //   }
+  // }
 
   // setSelected = toBeSelected => {
   //   this.setState({ isSelected: toBeSelected });

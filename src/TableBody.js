@@ -14,11 +14,11 @@ class TableBody extends React.Component {
     };
   }
 
-  componentWillReceiveProps(update) {
-    if (update.activeRowId === -1) {
-      this.setState({ activeRow: update.activeRowId });
-    }
-  }
+  // componentWillReceiveProps(update) {
+  //   if (update.activeRowId === -1) {
+  //     this.setState({ activeRow: update.activeRowId });
+  //   }
+  // }
 
   newRowElement = null;
 

@@ -36,7 +36,7 @@ class TableRow extends React.PureComponent {
     return this.rowController;
   };
 
-  componentWillMount() {}
+  componentDidMount() {}
 
   /** Prevents Row to be re-rendered if it does not change selection state.
    *
