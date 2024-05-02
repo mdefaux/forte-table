@@ -14,7 +14,9 @@ class ForteTable extends React.Component {
     // this.state = {};
 
     this.dragStartCells = false; // keeps the starting cell of a drag, if false no drag is currently active
-    
+    this.activeCell = false;
+    this.activeRow = false;
+
     if (props.createController)
       // if there is a controller factory, call it
       this.state.tableController = props.createController(this);
@@ -89,13 +91,32 @@ class ForteTable extends React.Component {
    * @param row - the row object corresponding to active row
    * @param rowIndex - index of the active row
    */
-  setActiveRow = (row, rowIndex) => {
-    this.setState({
-      activeRow: row,
-      activeRowIndex: rowIndex,
-    });
+  setActiveRow = (row, rowIndex, colIndex, rowComponent) => {
+    // if same row active, does nothing
+    if (this.activeRow === rowComponent ) {
+      this.activeRow.setActive(true, colIndex);
+      return;
+    }
 
-    if (this.props.setActiveRow) return this.props.setActiveRow(row, rowIndex);
+    // re-render previous active row
+    if (this.activeRow) {
+      this.activeRow.setActive(false);
+    }
+
+    // sets the new refs to active row
+    this.activeRowIndex = rowIndex;
+    this.activeRow = rowComponent;
+    this.activeRow.setActive(true, colIndex);
+
+    // this.setState({
+    //   activeRow: row,
+    //   activeRowIndex: rowIndex,
+    // });
+
+    // calls callback
+    if (this.props.setActiveRow) {
+      return this.props.setActiveRow(row, rowIndex);
+    }
   };
 
   /**Sets a column as active. Memorizes the row index and eventually the row id.
@@ -104,10 +125,13 @@ class ForteTable extends React.Component {
    * @param columnIndex
    */
   setActiveColumn = (column, columnIndex) => {
-    this.setState({
-      activeColumn: column,
-      activeColumnIndex: columnIndex,
-    });
+    // this.setState({
+    //   activeColumn: column,
+    //   activeColumnIndex: columnIndex,
+    // });
+    
+    this.activeColumn = column;
+    this.activeColIndex = columnIndex;
 
     if (this.props.setActiveColumn)
       return this.props.setActiveColumn(column, columnIndex);
@@ -115,28 +139,35 @@ class ForteTable extends React.Component {
 
   /**Sets the active cell. Memorizes the row and column index of the cell.
    *
-   * @param cell - cell to be activated.
+   * @param cellComponent - cell to be activated.
    */
-  setActiveCell = cell => {
-    if (!cell) {
-      debugger;
+  setActiveCell = (cellComponent, rowComponent) => {
+    // assert (cellComponent);
+
+    // if (cellComponent === this.state.activeCell) return;
+    if (cellComponent === this.activeCell){ 
+      return;
     }
 
-    if (cell === this.state.activeCell) return;
+    // this.setState({
+    //   activeCell: cellComponent,
+    //   activeRowIndex: cellComponent.props.rowIndex,
+    //   activeColIndex: cellComponent.props.columnIndex,
+    // });
+    this.activeCell = cellComponent;
+    // this.activeColIndex = cellComponent.props.columnIndex;
 
-    this.setState({
-      activeCell: cell,
-      activeRowIndex: cell.props.rowIndex,
-      activeColIndex: cell.props.columnIndex,
-    });
-    this.setActiveRow(cell.props.row, cell.props.rowIndex);
-    this.setActiveColumn(cell.props.column, cell.props.columnIndex);
+    this.setActiveRow(
+      cellComponent.props.row, 
+      cellComponent.props.rowIndex, cellComponent.props.columnIndex, 
+      rowComponent );
+    this.setActiveColumn(cellComponent.props.column, cellComponent.props.columnIndex);
 
     if (this.props.setActiveCell)
       return this.props.setActiveCell(
-        cell,
-        cell.props.columnIndex,
-        cell.props.rowIndex
+        cellComponent,
+        cellComponent.props.columnIndex,
+        cellComponent.props.rowIndex
       );
   };
 
@@ -335,12 +366,12 @@ class ForteTable extends React.Component {
     let selectedRows = {};
     selectedRows[cell.props.rowIndex] = {}; // [this.dragStartCells];
 
-    this.setState({
-      mouseDragging: true,
-      selectedCells: selectedRows,
-      selectedStartCoord: false,
-      selectedEndCoord: false,
-    });
+    // this.setState({
+    //   mouseDragging: true,
+    //   selectedCells: selectedRows,
+    //   selectedStartCoord: false,
+    //   selectedEndCoord: false,
+    // });
     return false;
   };
 
@@ -409,15 +440,15 @@ class ForteTable extends React.Component {
 
   onSelectionDragEnd = cell => {
 
-    this.setState( {mouseDragging: false}, () => {
+    // this.setState( {mouseDragging: false}, () => {
 
-      if (this.props.onCellSelectionChange) {
-        this.props.onCellSelectionChange(
-          this.getSelectedColumns(),
-          this.getSelectedRows()
-        );
-      }
-    } );
+    //   if (this.props.onCellSelectionChange) {
+    //     this.props.onCellSelectionChange(
+    //       this.getSelectedColumns(),
+    //       this.getSelectedRows()
+    //     );
+    //   }
+    // } );
   };
 
   getSelectedColumns = () => {
@@ -493,8 +524,8 @@ class ForteTable extends React.Component {
         type={this.props.type ? this.props.type : 'small'}
         // setActiveRow={this.setActiveRow}
         setActiveCell={this.setActiveCell}
-        activeRowIndex={this.state.activeRowIndex}
-        activeColIndex={this.state.activeColIndex}
+        activeRowIndex={this.activeRowIndex}
+        activeColIndex={this.activeColIndex}
         onCellClick={this.props.onCellClick}
         onCellDoubleClick={this.props.onCellDoubleClick}
         onCellMouseDown={this.props.onCellMouseDown}

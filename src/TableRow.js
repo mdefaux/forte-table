@@ -60,6 +60,13 @@ class TableRow extends React.PureComponent {
     }));
   };
 
+  setActive( active, activeColIndex ) {
+    this.setState({
+      active: active,
+      activeColIndex: activeColIndex,
+    });
+  }
+
   setActiveRow = () => {
     this.props.setActiveRow(this.props.row, this.props.index);
   };
@@ -122,7 +129,8 @@ class TableRow extends React.PureComponent {
       let isSelected = !!(
         this.props.selectedCells && this.props.selectedCells[index]
       );
-      let isActive = this.props.isActive && index === this.props.activeColIndex;
+      // let isActive = this.props.isActive && index === this.state.activeColIndex;
+      let isActive = index === this.state.activeColIndex;
 
       let forteWidth;
       if ( this.props.row.forteWidth && column === "value") {
@@ -140,8 +148,8 @@ class TableRow extends React.PureComponent {
           index={index}
           rowId={this.props.rowId}
           activeRow={this.props.isActive}
-          setActiveRow={this.setActiveRow}
-          setActiveCell={this.props.setActiveCell}
+          // setActiveRow={this.setActiveRow}
+          setActiveCell={(cellComponent)=>this.props.setActiveCell(cellComponent,this)}
           onCellClick={this.props.onCellClick}
           onCellDoubleClick={this.props.onCellDoubleClick}
           onCellMouseDown={this.props.onCellMouseDown}
@@ -179,7 +187,7 @@ class TableRow extends React.PureComponent {
       );
     });
 
-    const isActive = this.props.isActive;
+    const isActive = this.state.active; // this.props.isActive;
     const headRow = this.props.headRowRender
       ? this.props.headRowRender(row)
       : this.headRowRender(row);
