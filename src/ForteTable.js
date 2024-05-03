@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 
@@ -85,6 +85,14 @@ class ForteTable extends React.Component {
    *
    */
   componentDidUpdate() {}
+
+  /**Saves an array of all row components as soon as they are rendered
+   * 
+   * @param {*} rows 
+   */
+  onRowsRendered( rows ) {
+    this.rowsRendered = rows;
+  }
 
   /**Sets a row as active. Memorizes the row index and eventually the row id.
    *
@@ -358,6 +366,12 @@ class ForteTable extends React.Component {
     });
   };
 
+  /**Handler called when a mouse down event generated on a cell
+   * setups and starts a dragging of selection
+   * 
+   * @param {Component} cell 
+   * @returns false
+   */
   onSelectionDragStart = cell => {
     this.dragStartCells = {
       col: cell.props.columnIndex,
@@ -366,23 +380,44 @@ class ForteTable extends React.Component {
     let selectedRows = {};
     selectedRows[cell.props.rowIndex] = {}; // [this.dragStartCells];
 
-    // this.setState({
-    //   mouseDragging: true,
-    //   selectedCells: selectedRows,
-    //   selectedStartCoord: false,
-    //   selectedEndCoord: false,
-    // });
+    if (this.selectedStartCoord && this.selectedEndCoord) {
+      this.refreshRowSelection(
+        this.selectedStartCoord.row,
+        this.selectedEndCoord.row,
+        false);
+    }
+
+    // was this.setState({
+    this.mouseDragging= true;
+    this.selectedCells= selectedRows;
+    this.selectedStartCoord= false;
+    this.selectedEndCoord= false;
+      
     return false;
   };
 
+  /**Handler called when mouse moves over a cell.
+   * If a drag mode is active, updates the selected zone.
+   * 
+   * @param {Component} cell 
+   * @returns 
+   */
   onSelectionDragMove = cell => {
-    if (!this.dragStartCells || !this.state.mouseDragging)
-      // if there is no drag started, exits
+    if (!this.dragStartCells || !this.mouseDragging)
+      // if there is no drag active, does nothing
       return;
 
     this.onSelectionDragMoveAt(cell.props.columnIndex, cell.props.rowIndex);
   };
 
+  /**Updates the selection zone to given coords
+   * 
+   * @param {*} columnIndex 
+   * @param {*} rowIndex 
+   * @param {*} optStartCol 
+   * @param {*} optStartRow 
+   * @returns 
+   */
   onSelectionDragMoveAt(columnIndex, rowIndex, optStartCol, optStartRow ) {
     let selectedRows = {}; // empties the selected value
 
@@ -401,11 +436,17 @@ class ForteTable extends React.Component {
     // Avoids the selection of the single cell when user click and move on the same cell
     // if drag selection ends where started, clears entire selection (?)
     if (startCoord.col === endCoord.col && startCoord.row === endCoord.row) {
-      this.setState({
-        selectedCells: [],
-        selectedStartCoord: false,
-        selectedEndCoord: false,
-      });
+      
+      this.refreshRowSelection( 
+        this.selectedStartCoord.row, 
+        this.selectedEndCoord.row, 
+        false );
+        
+      // was this.setState({
+      this.selectedCells= {};
+      this.selectedStartCoord= startCoord;
+      this.selectedEndCoord= endCoord;
+      
       return true;
     }
 
@@ -419,59 +460,79 @@ class ForteTable extends React.Component {
 
     // checks if nothing has varied
     if (
-      this.state.selectedStartCoord &&
-      this.state.selectedStartCoord.col === startCoord.col &&
-      this.state.selectedStartCoord.row === startCoord.row &&
-      this.state.selectedEndCoord &&
-      this.state.selectedEndCoord.col === endCoord.col &&
-      this.state.selectedEndCoord.row === endCoord.row
+      this.selectedStartCoord &&
+      this.selectedStartCoord.col === startCoord.col &&
+      this.selectedStartCoord.row === startCoord.row &&
+      this.selectedEndCoord &&
+      this.selectedEndCoord.col === endCoord.col &&
+      this.selectedEndCoord.row === endCoord.row
     ) {
       return false;
     }
 
+    // updates only the selected rows
+    const startUpdate = Math.min( this.selectedStartCoord.row, startCoord.row );
+    const endUpdate = Math.max( this.selectedEndCoord.row, endCoord.row );
+    this.refreshRowSelection( startUpdate, endUpdate, selectedRows );
+
     // stores the selection coordinates in state and refresh the rendering of whole table
-    this.setState({
-      selectedCells: selectedRows,
-      selectedStartCoord: startCoord,
-      selectedEndCoord: endCoord,
-    });
+    // was this.setState({
+    this.selectedCells= selectedRows;
+    this.selectedStartCoord= startCoord;
+    this.selectedEndCoord= endCoord;
+    // });
+
     return false;
   };
 
+  refreshRowSelection( startUpdate, endUpdate, selectedRows ) {
+
+    for( let r= startUpdate; r <= endUpdate; r++ ) {
+      this.rowsRendered[r].selectCells( selectedRows[r] );
+    }
+  }
+
+  /**Handler called when mouse up. Stops dragging selection mode.
+   * 
+   * @param {*} cell 
+   */
   onSelectionDragEnd = cell => {
 
     // this.setState( {mouseDragging: false}, () => {
 
-    //   if (this.props.onCellSelectionChange) {
-    //     this.props.onCellSelectionChange(
-    //       this.getSelectedColumns(),
-    //       this.getSelectedRows()
-    //     );
-    //   }
+    this.mouseDragging = false;
+
+    if (this.props.onCellSelectionChange) {
+      this.props.onCellSelectionChange(
+        this.getSelectedColumns(),
+        this.getSelectedRows(),
+        cell
+      );
+    }
     // } );
   };
 
   getSelectedColumns = () => {
-    if (!this.state.selectedStartCoord) return [];
+    if (!this.selectedStartCoord) return [];
 
     let columns = this.props.columns();
 
     // returns a subset copy of the array from start selection to end selection
     return columns.slice(
-      this.state.selectedStartCoord.col,
-      this.state.selectedEndCoord.col + 1
+      this.selectedStartCoord.col,
+      this.selectedEndCoord.col + 1
     );
   };
 
   getSelectedRows = () => {
-    if (!this.state.selectedStartCoord) return [];
+    if (!this.selectedStartCoord) return [];
 
     let rows = this.props.rows();
 
     // returns a subset copy of the array from start selection to end selection
     return rows.slice(
-      this.state.selectedStartCoord.row,
-      this.state.selectedEndCoord.row + 1
+      this.selectedStartCoord.row,
+      this.selectedEndCoord.row + 1
     );
   };
 
@@ -540,6 +601,7 @@ class ForteTable extends React.Component {
         newRow={this.props.newRow}
         notifyActiveCell={this.notifyActiveCell}
         readOnly={this.props.readOnly}
+        onRowsRendered={(rows)=>this.onRowsRendered(rows)}
       />
     );
   }

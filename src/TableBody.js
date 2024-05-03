@@ -29,7 +29,26 @@ class TableBody extends React.Component {
     // });
   };
 
+  onRowRendered( row, index ) {
+    this.rows[ index ] = row;
+
+    if ( this.rows.length < this.rowsCount ) {
+      return;
+    }
+
+    for( let i=0; i < this.rowsCount.length; i++ ) {
+      if ( !this.rows ) {
+        return;
+      }
+    }
+    this.props.onRowsRendered( this.rows );
+  }
+
   rowMap(rowIndexes, columnRangeStart, columnRangeEnd) {
+
+    this.rows = [];
+    this.rowsCount = rowIndexes.length;
+
     return rowIndexes.map((dataRecord, index) => {
       // let isActive = false;
       // if (dataRecord.id === this.state.activeRow) {
@@ -48,6 +67,8 @@ class TableBody extends React.Component {
           saveData={this.props.saveData}
           // key={dataRecord.id ? dataRecord.id : index} // @TODO check key with dataRecord.id
           key={index} // @TODO check key with dataRecord.id
+          // ref={(ref)=>this.onRowRendered( ref, index )}
+          onRowRendered={(ref)=>this.onRowRendered( ref, index )}
           rowId={dataRecord.id}
           index={index}
           tableController={this.props.tableController}
@@ -75,8 +96,8 @@ class TableBody extends React.Component {
           onCellKeyDown={this.props.onCellKeyDown}
           onCellKeyUp={this.props.onCellKeyUp}
           setActiveCell={this.props.setActiveCell}
-          selectedCells={sel}
-          isSelected={isSelected}
+          // selectedCells={sel}
+          // isSelected={isSelected}
           onSelectionDragStart={this.props.onSelectionDragStart}
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}
@@ -101,7 +122,6 @@ class TableBody extends React.Component {
       this.props.columnRangeStart, this.props.columnRangeEnd );
     // const rows = this.rowMap(rowIndexes);
     // const fixedRows = this.rowMap(rowIndexes, 0, 3);
-
     
     return <div style={{...styles.root,...this.props.style}}>{rows}</div>;
 

@@ -36,7 +36,9 @@ class TableRow extends React.PureComponent {
     return this.rowController;
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.props.onRowRendered( this );
+  }
 
   /** Prevents Row to be re-rendered if it does not change selection state.
    *
@@ -65,6 +67,10 @@ class TableRow extends React.PureComponent {
       active: active,
       activeColIndex: activeColIndex,
     });
+  }
+
+  selectCells( selectedCells ) {
+    this.setState( { selectedCells: selectedCells } );
   }
 
   setActiveRow = () => {
@@ -127,7 +133,7 @@ class TableRow extends React.PureComponent {
       // for each column in the view
       // TODO: copies the model of the field into a local value
       let isSelected = !!(
-        this.props.selectedCells && this.props.selectedCells[index]
+        this.state.selectedCells && this.state.selectedCells[index]
       );
       // let isActive = this.props.isActive && index === this.state.activeColIndex;
       let isActive = index === this.state.activeColIndex;
@@ -171,7 +177,7 @@ class TableRow extends React.PureComponent {
               backgroundColor: 'white' } : {}
           }}
           cellClassName={this.props.cellClassName}
-          selectedCells={this.props.selectedCells}
+          selectedCells={this.state.selectedCells}
           isSelected={isSelected}
           isActive={isActive}
           onSelectionDragStart={this.props.onSelectionDragStart}
