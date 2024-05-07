@@ -36,7 +36,7 @@ class TableRow extends React.PureComponent {
     return this.rowController;
   };
 
-  componentDidMount() {
+  componentDidUpdate() {
     this.props.onRowRendered( this );
   }
 

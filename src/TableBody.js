@@ -30,9 +30,17 @@ class TableBody extends React.Component {
   };
 
   onRowRendered( row, index ) {
+    if ( this.rows[ index ] === row ) {
+      return;
+    }
+
     this.rows[ index ] = row;
 
     if ( this.rows.length < this.rowsCount ) {
+      return;
+    }
+
+    if ( this.rowsRendered ) {
       return;
     }
 
@@ -42,12 +50,14 @@ class TableBody extends React.Component {
       }
     }
     this.props.onRowsRendered( this.rows );
+    this.rowsRendered = true;
   }
 
   rowMap(rowIndexes, columnRangeStart, columnRangeEnd) {
 
     this.rows = [];
     this.rowsCount = rowIndexes.length;
+    this.rowsRendered = false;
 
     return rowIndexes.map((dataRecord, index) => {
       // let isActive = false;

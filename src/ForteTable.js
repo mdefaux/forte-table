@@ -188,11 +188,11 @@ class ForteTable extends React.Component {
       return;
     }
 
-    this.setState({
-      activeCell: cell,
-      activeRowIndex: cell.props.rowIndex,
-      activeColIndex: cell.props.columnIndex,
-    });
+    // this.setState({
+    //   activeCell: cell,
+    //   activeRowIndex: cell.props.rowIndex,
+    //   activeColIndex: cell.props.columnIndex,
+    // });
 
     if (this.props.setActiveCell)
       return this.props.setActiveCell(
@@ -359,11 +359,18 @@ class ForteTable extends React.Component {
       return;
     }
 
-    this.setState({
-      // activeCell: cell,
-      activeRowIndex: newRowIndex,
-      activeColIndex: newColIndex,
-    });
+    // TODO: refresh old row
+    if( this.activeRowIndex !== newRowIndex ) {
+      // 
+    }
+
+    // was this.setState({
+    //   // activeCell: cell,
+    this.activeRowIndex = newRowIndex;
+    this.activeColIndex = newColIndex;
+    // });
+
+    // TODO: refresh new row
   };
 
   /**Handler called when a mouse down event generated on a cell
