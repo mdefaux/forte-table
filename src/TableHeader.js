@@ -15,7 +15,7 @@ class TableHeader extends React.Component {
 
       return <ColumnHeader
         // key={index}
-        key={col.name}
+        key={col.name || col || `header-${index}`}
         index={index}
         headColRender={this.props.headColRender}
         column={col}

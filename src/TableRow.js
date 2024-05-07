@@ -150,7 +150,7 @@ class TableRow extends React.PureComponent {
       return (
         <TableCell
           // key={index}
-          key={column.name}
+          key={column.name || column || `cell-${index}`}
           index={index}
           rowId={this.props.rowId}
           activeRow={this.props.isActive}
