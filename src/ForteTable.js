@@ -495,6 +495,10 @@ class ForteTable extends React.Component {
   refreshRowSelection( startUpdate, endUpdate, selectedRows ) {
 
     for( let r= startUpdate; r <= endUpdate; r++ ) {
+      if ( !this.rowsRendered[r] ) {
+        console.error( `ForteTable: rowsRendered[ ${r} ] does not exists.`);
+        break;
+      }
       this.rowsRendered[r].selectCells( selectedRows[r] );
     }
   }
