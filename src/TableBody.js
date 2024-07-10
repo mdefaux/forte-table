@@ -67,10 +67,6 @@ class TableBody extends React.Component {
       // checks if row is the active one comparing the active row index.
       let isActive = index === this.props.activeRowIndex;
 
-      // checks if row is selected, looking for row index in selected object index
-      let sel = this.props.selectedCells && this.props.selectedCells[index];
-      let isSelected = !!sel; // converts null in boolean false and 'some value' into boolean true
-
       return (
         <TableRow
           isActive={isActive}
@@ -106,8 +102,6 @@ class TableBody extends React.Component {
           onCellKeyDown={this.props.onCellKeyDown}
           onCellKeyUp={this.props.onCellKeyUp}
           setActiveCell={this.props.setActiveCell}
-          // selectedCells={sel}
-          // isSelected={isSelected}
           onSelectionDragStart={this.props.onSelectionDragStart}
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}

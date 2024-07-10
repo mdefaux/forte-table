@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 
@@ -639,29 +639,14 @@ class ForteTable extends React.Component {
    * @returns {XML}
    */
   render() {
-    const width = this.props.tableWidth;
-    const height = this.props.tableheight;
     const columnRangeStart = this.props.columnFixedCount ? 0 : undefined;
     const columnRangeEnd = this.props.columnFixedCount;
-
-    const tableFixedHeader = columnRangeEnd && 
-      this.renderHeader( { left: '0px', top: '-42px', position: 'absolute' }, 
-      columnRangeStart, columnRangeEnd);
-
     const tableHeader = this.renderHeader( {}, undefined, columnRangeEnd, undefined );
-
-    // const tableBody = this.renderBody( columnRangeEnd && { position: 'absolute' } );
     const tableBody = this.renderBody( {backgroundColor: 'white'}, columnRangeStart, columnRangeEnd );
-
-    // const tableBodyFixed = columnRangeEnd && this.renderBody( {
-    //   position: 'sticky', left: '0px', backgroundColor: 'white'},
-    //   columnRangeStart, columnRangeEnd );
-    const tableFooter = '';
 
     return (
       <div
         style={{
-          // borderCollapse: 'collapse',
           ...this.props.style, position: 'relative'
         }}
         className="forteTableContainer"

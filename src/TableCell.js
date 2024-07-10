@@ -169,15 +169,6 @@ class TableCell extends React.Component {
 
   render() {
     let content = ' ';
-    let tabIndex = this.props.columnIndex + this.props.rowIndex * 100 + 100;
-
-    // if (this.hasController() && this.state.input) {
-    //   content = this.getController().getInputComponent(
-    //     this.props.column,
-    //     this.props.row,
-    //     this
-    //   );
-    // } else
 
     if (this.props.cellRender)
       content = this.props.cellRender(this.props.column, this.props.row, this);
@@ -222,7 +213,6 @@ class TableCell extends React.Component {
       <div
         className={className}
         style={style}
-        // tabIndex={tabIndex}
         onClick={this.onClick}
         onDoubleClick={this.onDoubleClick}
         onMouseDown={this.onMouseDown}
