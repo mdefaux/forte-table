@@ -129,9 +129,12 @@ class TableRow extends React.PureComponent {
     if (row._subscribe /*&& !this.props.columnRangeEnd*/ ) {
       row._subscribe(this);
     }
-    // debugger;
+
     let rowData = row._getData ? row._getData() : row;
 
+    const errors = this.props.cellErrors;
+
+    const cellErrors = [...new Set(errors.map(e => e.column))]
     const columns = this.props.columns(); // .slice( this.props.columnRangeStart, this.props.columnRangeEnd );
     const cells = columns.map((/*headerModel*/ column, index) => {
       // for each column in the view
@@ -151,6 +154,20 @@ class TableRow extends React.PureComponent {
         (acc,col)=> acc+ (col.userColumnWidth || col.defaultColumnWidth || forteWidth || 150),
          48+4 );
 
+      let cellError = cellErrors.includes(column.name);
+
+      let errorText;
+
+      if (cellError) {
+        let filteredErrors = errors.filter(e => e.column == column.name);
+        errorText = filteredErrors.reduce(
+          (text, error) => (text += `${error.msg}\n`),
+          ""
+        )
+      }
+
+      let border = cellError ? "1px solid red" : "";
+      
       return (
         <TableCell
           // key={index}
@@ -178,12 +195,13 @@ class TableRow extends React.PureComponent {
           style={{
             ...index < this.props.columnRangeEnd ? { 
               position: 'sticky', left: `${leftPos}px`, zIndex: '2', 
-              backgroundColor: 'white' } : {}
+              backgroundColor: 'white', border: border } : { border: border }
           }}
           cellClassName={this.props.cellClassName}
           selectedCells={this.state.selectedCells}
           isSelected={isSelected}
           isActive={isActive}
+          errorText={errorText}
           onSelectionDragStart={this.props.onSelectionDragStart}
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}

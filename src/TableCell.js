@@ -212,6 +212,7 @@ class TableCell extends React.Component {
     return (
       <div
         className={className}
+        title={this.props.errorText}
         style={style}
         onClick={this.onClick}
         onDoubleClick={this.onDoubleClick}

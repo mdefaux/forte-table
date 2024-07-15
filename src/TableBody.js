@@ -1,6 +1,7 @@
 import React from 'react';
 import TableRow from './TableRow';
 import styles from '../styles/table-body-styles';
+import Record from '../../forte-form/forte-store/Record';
 
 class TableBody extends React.Component {
   constructor(props) {
@@ -66,6 +67,11 @@ class TableBody extends React.Component {
       // }
       // checks if row is the active one comparing the active row index.
       let isActive = index === this.props.activeRowIndex;
+      let cellErrors = [];
+      
+      if (dataRecord instanceof Record) {
+        cellErrors = dataRecord.getErrors()
+      }
 
       return (
         <TableRow
@@ -87,6 +93,7 @@ class TableBody extends React.Component {
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
+          cellErrors={cellErrors}
           columnsWidth={this.props.columnsWidth}
           columnsWidthSum={this.props.columnsWidth.reduce((p, c) => c + p, 0)}
           headRowRender={this.props.headRowRender}
