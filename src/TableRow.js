@@ -77,10 +77,6 @@ class TableRow extends React.PureComponent {
     this.setState( { selectedCells: selectedCells } );
   }
 
-  setActiveRow = () => {
-    this.props.setActiveRow(this.props.row, this.props.index);
-  };
-
   headRowRender(row) {
     return (
       <div
@@ -175,7 +171,6 @@ class TableRow extends React.PureComponent {
           index={index}
           rowId={this.props.rowId}
           activeRow={this.props.isActive}
-          // setActiveRow={this.setActiveRow}
           setActiveCell={(cellComponent)=>this.props.setActiveCell(cellComponent,this)}
           onCellClick={this.props.onCellClick}
           onCellDoubleClick={this.props.onCellDoubleClick}
