@@ -157,7 +157,7 @@ class TableRow extends React.PureComponent {
           key={column.name || column || `cell-${index}`}
           index={index}
           rowId={this.props.rowId}
-          activeRow={this.props.isActive}
+          activeRow={this.state.active}
           // setActiveRow={this.setActiveRow}
           setActiveCell={(cellComponent)=>this.props.setActiveCell(cellComponent,this)}
           onCellClick={this.props.onCellClick}
