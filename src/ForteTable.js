@@ -166,7 +166,7 @@ class ForteTable extends React.Component {
     // this.activeColIndex = cellComponent.props.columnIndex;
 
     this.setActiveRow(
-      cellComponent.props.row, 
+      rowComponent, // cellComponent.props.row, 
       cellComponent.props.rowIndex, cellComponent.props.columnIndex, 
       rowComponent );
     this.setActiveColumn(cellComponent.props.column, cellComponent.props.columnIndex);
