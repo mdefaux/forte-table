@@ -75,11 +75,6 @@ class ColumnHeader extends React.Component {
       ? this.state.columnWidth
       : this.props.columnWidth;
 
-    // style.width = this.props.columnWidth; // this.onColumnWidth();
-    // style.minWidth = this.props.columnWidth;
-    // style.maxWidth = this.props.columnWidth;
-    // console.log(style);
-
     return (
       <div
         className='ft-table--cell__header'

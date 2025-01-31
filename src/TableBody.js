@@ -1,6 +1,7 @@
 import React from 'react';
 import TableRow from './TableRow';
 import styles from '../styles/table-body-styles';
+import Record from '../../forte-form/forte-store/Record';
 
 class TableBody extends React.Component {
   constructor(props) {
@@ -14,20 +15,7 @@ class TableBody extends React.Component {
     };
   }
 
-  // componentWillReceiveProps(update) {
-  //   if (update.activeRowId === -1) {
-  //     this.setState({ activeRow: update.activeRowId });
-  //   }
-  // }
-
   newRowElement = null;
-
-  setActiveRow = (row, rowIndex) => {
-    debugger;
-    // this.setState({ activeRow: rowId }, function() {
-    //   this.props.setActiveRow(rowId, rowIndex);
-    // });
-  };
 
   onRowRendered( row, index ) {
     if ( this.rows[ index ] === row ) {
@@ -49,35 +37,30 @@ class TableBody extends React.Component {
         return;
       }
     }
+
     this.props.onRowsRendered( this.rows );
     this.rowsRendered = true;
   }
 
   rowMap(rowIndexes, columnRangeStart, columnRangeEnd) {
-
     this.rows = [];
     this.rowsCount = rowIndexes.length;
     this.rowsRendered = false;
 
     return rowIndexes.map((dataRecord, index) => {
-      // let isActive = false;
-      // if (dataRecord.id === this.state.activeRow) {
-      //   isActive = true;
-      // }
       // checks if row is the active one comparing the active row index.
       let isActive = index === this.props.activeRowIndex;
-
-      // checks if row is selected, looking for row index in selected object index
-      let sel = this.props.selectedCells && this.props.selectedCells[index];
-      let isSelected = !!sel; // converts null in boolean false and 'some value' into boolean true
+      let cellErrors = [];
+      
+      if (dataRecord instanceof Record) {
+        cellErrors = dataRecord.getErrors()
+      }
 
       return (
         <TableRow
           isActive={isActive}
           saveData={this.props.saveData}
-          // key={dataRecord.id ? dataRecord.id : index} // @TODO check key with dataRecord.id
           key={index} // @TODO check key with dataRecord.id
-          // ref={(ref)=>this.onRowRendered( ref, index )}
           onRowRendered={(ref)=>this.onRowRendered( ref, index )}
           rowId={dataRecord.id}
           index={index}
@@ -91,11 +74,11 @@ class TableBody extends React.Component {
           cellRender={this.props.cellRender}
           cellStyle={this.props.cellStyle}
           cellClassName={this.props.cellClassName}
+          cellErrors={cellErrors}
           columnsWidth={this.props.columnsWidth}
           columnsWidthSum={this.props.columnsWidth.reduce((p, c) => c + p, 0)}
           headRowRender={this.props.headRowRender}
           headers={this.props.headers}
-          setActiveRow={this.setActiveRow}
           activeRowIndex={this.props.activeRowIndex}
           activeColIndex={this.props.activeColIndex}
           onCellClick={this.props.onCellClick}
@@ -106,8 +89,6 @@ class TableBody extends React.Component {
           onCellKeyDown={this.props.onCellKeyDown}
           onCellKeyUp={this.props.onCellKeyUp}
           setActiveCell={this.props.setActiveCell}
-          // selectedCells={sel}
-          // isSelected={isSelected}
           onSelectionDragStart={this.props.onSelectionDragStart}
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}
@@ -128,24 +109,9 @@ class TableBody extends React.Component {
       this.state.range.end
     );
 
-    const rows = this.rowMap(rowIndexes, 
-      this.props.columnRangeStart, this.props.columnRangeEnd );
-    // const rows = this.rowMap(rowIndexes);
-    // const fixedRows = this.rowMap(rowIndexes, 0, 3);
+    const rows = this.rowMap( rowIndexes, this.props.columnRangeStart, this.props.columnRangeEnd );
     
     return <div style={{...styles.root,...this.props.style}}>{rows}</div>;
-
-    // return <div style={{ position: 'relative'}}>
-    // return <div style={{ display:'block' }}>
-    // {/* return <> */}
-    //   <div style={{...styles.root, position: 'absolute', left: '48px', }}>{rows}</div>
-    //   <div style={{ // ...styles.root,
-    //       position: 'sticky',
-    //       left: '0px',
-    //       zIndex: 100,
-    //   }}>{fixedRows}</div>
-    // </div>
-    // </>
   }
 }
 

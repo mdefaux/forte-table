@@ -25,7 +25,7 @@
 }
 
 .ft-cell__container--active {
-  border: 1px double #108ee9;
+  border: 1px double #108ee9 !important;
   /*  min-width: 150px;
   max-width: 150px;
   margin-left: -1px;
