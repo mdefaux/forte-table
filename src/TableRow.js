@@ -141,13 +141,13 @@ class TableRow extends React.PureComponent {
       // let isActive = this.props.isActive && index === this.state.activeColIndex;
       let isActive = index === this.state.activeColIndex;
 
-      let forteWidth;
-      if ( this.props.row.forteWidth && column === "value") {
-        forteWidth = this.props.row.forteWidth;
-      }
+      // calculate column width
+      const columnWidth = (col,index) => (
+        (col.userColumnWidth || col.defaultColumnWidth || this.props.columnsWidth[index] || 150)
+      )
 
       let leftPos = columns.slice( 0, index ).reduce( 
-        (acc,col)=> acc+ (col.userColumnWidth || col.defaultColumnWidth || forteWidth || 150),
+        (acc,col)=> acc+ columnWidth(col,index),
          48+4 );
 
       let cellError = cellErrors.includes(column.name);
@@ -201,10 +201,7 @@ class TableRow extends React.PureComponent {
           onSelectionDragStart={this.props.onSelectionDragStart}
           onSelectionDragMove={this.props.onSelectionDragMove}
           onSelectionDragEnd={this.props.onSelectionDragEnd}
-          // columnWidth={this.props.columnsWidth[index]}
-          columnWidth={
-            column.userColumnWidth || column.defaultColumnWidth || forteWidth || 150
-          }
+          columnWidth={ columnWidth(column,index) }
           getRowController={this.getController}
           notifyActiveCell={this.props.notifyActiveCell}
         />
