@@ -130,7 +130,7 @@ class TableRow extends React.PureComponent {
 
     const errors = this.props.cellErrors;
 
-    const cellErrors = [...new Set(errors.map(e => e.column))]
+    const cellErrors = [...new Set(errors.map(e => e?.column))]
     const columns = this.props.columns(); // .slice( this.props.columnRangeStart, this.props.columnRangeEnd );
     const cells = columns.map((/*headerModel*/ column, index) => {
       // for each column in the view
@@ -155,7 +155,7 @@ class TableRow extends React.PureComponent {
       let errorText;
 
       if (cellError) {
-        let filteredErrors = errors.filter(e => e.column == column.name);
+        let filteredErrors = errors.filter(e => !!e && e.column == column.name);
         errorText = filteredErrors.reduce(
           (text, error) => (text += `${error.msg}\n`),
           ""
