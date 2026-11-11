@@ -4,3 +4,6 @@ examples
 .babelrc
 .gitignore
 webpack.config.js
+playwright.config.js
+tests
+test-results
