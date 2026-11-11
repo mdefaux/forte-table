@@ -4,12 +4,15 @@
   "description": "A React table management library from Forte.",
   "main": "dist/index.js",
   "scripts": {
-    "start": "webpack-dev-server --open --watch",
+    "start": "webpack serve --open",
     "transpile": "babel src -d dist --copy-files",
     "prepublishOnly": "npm run transpile",
     "build": "webpack --mode production",
     "deploy": "gh-pages -d examples/dist",
-    "publish-demo": "npm run build && npm run deploy"
+    "publish-demo": "npm run build && npm run deploy",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report tests/report"
   },
   "repository": {
     "type": "git",
@@ -28,29 +31,28 @@
     "url": "https://github.com/mdefaux/forte-table/issues"
   },
   "homepage": "https://github.com/mdefaux/forte-table#readme",
-  "dependencies": {
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0"
-  },
   "peerDependencies": {
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-proposal-class-properties": "^7.2.3",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.5",
-    "css-loader": "^2.1.0",
-    "gh-pages": "^2.0.1",
-    "html-webpack-plugin": "^3.2.0",
+    "@babel/cli": "^7.25.0",
+    "@babel/core": "^7.25.0",
+    "@babel/preset-env": "^7.25.0",
+    "@babel/preset-react": "^7.24.0",
+    "@playwright/test": "^1.65.0",
+    "babel-loader": "^9.2.0",
+    "css-loader": "^7.1.0",
+    "gh-pages": "^6.1.0",
+    "html-webpack-plugin": "^5.6.0",
     "husky": "^1.3.1",
     "lint-staged": "^8.1.0",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.28.4",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.4"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
   },
   "husky": {
     "hooks": {
@@ -58,9 +60,14 @@
     }
   },
   "lint-staged": {
-    "*.{js,json,css,md}": [
-      "prettier --write",
-      "git add"
+    "linters": {
+      "*.{js,json,css,md}": [
+        "prettier --write",
+        "git add"
+      ]
+    },
+    "ignore": [
+      "**/dist/**"
     ]
   }
 }

@@ -1,23 +1,25 @@
 .ft-cell__container {
-  display: table-cell;
+  flex: none;
+  display: flex;
+  align-items: center;
   position: relative;
-  /*padding-left: 4px;*/
-  /*CODICE SOTTO NECESSARIO PER CORRETTA VISUALIZZAZIONE OBJECTLINK*/
-  min-width: 150px;
-  max-width: 150px;
-  /*text-align: left;
-  padding: 8px;
-  overflow: hidden;*/
+  overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
   box-sizing: border-box;
-  vertical-align: middle;
   cursor: default;
-  transition: all 0.1s ease;
+  transition: background-color 0.1s ease;
 }
 
 .ft-cell__container:focus {
   outline: none;
+}
+
+.ft-cell__content {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ft-cell__container--normal {
@@ -26,11 +28,6 @@
 
 .ft-cell__container--active {
   border: 1px double #108ee9 !important;
-  /*  min-width: 150px;
-  max-width: 150px;
-  margin-left: -1px;
-  background-color: #fff;*/
-  position: relative;
 }
 
 .ft-cell__content--normal {
@@ -45,7 +42,6 @@
 }
 
 .ft-cell__content--active--readonly {
-  /*padding: 4px;*/
   color: #919191;
   background-color: #eeeeee;
   margin: -4px;
@@ -76,9 +72,8 @@
 }
 
 .disable-selection {
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer */
-  -khtml-user-select: none; /* KHTML browsers (e.g. Konqueror) */
-  -webkit-user-select: none; /* Chrome, Safari, and Opera */
-  -webkit-touch-callout: none; /* Disable Android and iOS callouts*/
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }

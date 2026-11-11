@@ -1,0 +1,100 @@
+.dg-example {
+  text-align: left;
+}
+
+.dg-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dg-toolbar input {
+  width: 50px;
+}
+
+.dg-hint {
+  color: #777;
+  font-size: 12px;
+}
+
+.dg-cell {
+  display: block;
+  padding: 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dg-cell--right {
+  text-align: right;
+}
+
+.dg-cell--center {
+  text-align: center;
+  color: #00a854;
+}
+
+.dg-progress {
+  position: relative;
+  height: 16px;
+  margin: 0 6px;
+  padding: 0;
+  background: #eef1f3;
+  border-radius: 3px;
+}
+
+.dg-progress__bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #8cc5f2;
+  border-radius: 3px;
+}
+
+.dg-progress__label {
+  position: relative;
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.dg-rating {
+  color: #f5a623;
+  letter-spacing: 1px;
+}
+
+.dg-status {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.dg-status--active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.dg-status--onleave {
+  background: #fff8e1;
+  color: #a86d00;
+}
+
+.dg-status--terminated {
+  background: #fdecea;
+  color: #c62828;
+}
+
+.dg-status-bar {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.dg-stat {
+  margin-left: 16px;
+  color: #555;
+}

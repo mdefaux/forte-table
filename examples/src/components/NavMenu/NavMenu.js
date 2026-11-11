@@ -1,6 +1,5 @@
 import React from 'react';
 import './nav-menu.css';
-import { runInThisContext } from 'vm';
 
 const NavMenu = props => (
   <header className='App-header'>
@@ -15,7 +14,7 @@ const NavMenu = props => (
               props.activePage === index ? 'ft-examples--menu__active' : ''
             }
             key={index}
-            onClick={props.updatePage.bind(this, { li, index })}
+            onClick={() => props.updatePage({ li, index })}
           >
             <a>{li.name}</a>
           </li>

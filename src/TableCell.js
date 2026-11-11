@@ -1,192 +1,138 @@
 import React from 'react';
+import { makeCellHandle } from './cellHandle';
 import '../styles/table-cell.css';
 
-class TableCell extends React.Component {
-  state = {
-    //   input: false,
-    //   tempContent: undefined, // TODO: handle edit mode
-    //   isValid: true, // TODO: handle valid value
-  };
+const { useRef } = React;
 
-  cellController = null;
-
-  hasController = () => {
-    return this.cellController;
-  };
-
-  getController = () => {
-    if (!this.hasController())
-      this.cellController = this.props
-        .getRowController()
-        .createCellController(this, this.props.row, this.props.column);
-    return this.cellController;
-  };
-
-  setActive() {
-    this.props.setActiveCell(this);
-  }
-
-  onClick = e => {
-    if (this.props.onCellClick)
-      this.props.onCellClick(
-        e,
-        this.props.column,
-        this.props.row,
-        this.props.model,
-        this
-      );
-    this.setActive();
-  };
-
-  onDoubleClick = e => {
-    if (this.props.onCellDoubleClick)
-      this.props.onCellDoubleClick(
-        e,
-        this.props.column,
-        this.props.row,
-        this.props.model,
-        this
-      );
-  };
-  onMouseDown = e => {
-    if (e.button === 1) {
-      return;
-    }
-
-    if (this.props.onCellMouseDown) {
-      this.props.onCellMouseDown(
-        e,
-        this.props.column,
-        this.props.row,
-        this.props.model,
-        this
-      );
-    }
-
-    this.setActive();
-
-    return this.props.onSelectionDragStart(this, e);
-  };
-
-  onMouseMove = e => {
-    if (this.props.onCellMouseMove) {
-      this.props.onCellMouseMove(
-        e,
-        this.props.column,
-        this.props.row,
-        this.props.model,
-        this
-      );
-    }
-
-    this.props.onSelectionDragMove(this, e);
-  };
-
-  onMouseUp = e => {
-    if (this.props.onCellMouseUp) {
-      this.props.onCellMouseUp(
-        e,
-        this.props.column,
-        this.props.row,
-        this.props.model,
-        this
-      );
-    }
-
-    this.props.onSelectionDragEnd(this, e);
-  };
-
-  onKeyDown = evt => {
-    evt = evt || window.event;
-    
-    if (this.props.onCellKeyDown) {
-      this.props.onCellKeyDown(
-        evt,
-        this.props.column,
-        this.props.row,
-        this.props.model,
-        this
-      );
-    }
-  };
-
-  onKeyUp = evt => {
-    evt = evt || window.event;
-
-    if (this.props.onCellKeyUp) {
-      this.props.onCellKeyUp(
-        evt,
-        this.props.column,
-        this.props.row,
-        this.props.model,
-        this
-      );
-    }
-  };
-
-  render() {
-    let content = ' ';
-
-    if (this.props.cellRender)
-      content = this.props.cellRender(this.props.column, this.props.row, this);
-
-    // sets active class if cell has active property
-    let className =
-      this.props.isActive
-        ? this.props.column.nobordercell
-          ? 'ft-cell__container '
-          : 'ft-cell__container ft-cell__container--active disable-selection'
-        : this.props.column.nobordercell
-          ? 'ft-cell__container '
-          : 'ft-cell__container ft-cell__container--normal disable-selection';
-    
-    if (this.props.cellClassName) {
-      className = this.props.cellClassName(
-        className,
-        this.props.column,
-        this.props.row,
-        this
-      );
-    }
-
-    let style = {};
-    
-    style = this.props.cellStyle
-      ? this.props.cellStyle(style, this.props.column, this.props.row, this)
-      : style;
-
-    // sets height and width of the cell
-    style.width = this.props.columnWidth;
-    style.minWidth = this.props.columnWidth;
-    style.maxWidth = this.props.columnWidth;
-
-    style = {...this.props.style, ...style }
-
-    // sets background color for selected cells
-    if (this.props.isSelected) {
-      style.backgroundColor = '#BFBFFF';
-      className += ' ft-cell-selected';
-    }
-
-    return (
-      <div
-        className={className}
-        title={this.props.errorText}
-        style={style}
-        onClick={this.onClick}
-        onDoubleClick={this.onDoubleClick}
-        onMouseDown={this.onMouseDown}
-        onMouseMove={this.onMouseMove}
-        onMouseUp={this.onMouseUp}
-        onKeyDown={this.onKeyDown}
-        onKeyUp={this.onKeyUp}
-        draggable={false}
-        ref={ref => (this.ref = ref)}
-      >
-        {content}
-      </div>
-    );
-  }
+function defaultContent(column, row) {
+  if (row === null || typeof row !== 'object') return ' ';
+  const key = column && typeof column === 'object' ? column.name : column;
+  const value = row[key];
+  return value == null || typeof value === 'object' ? ' ' : String(value);
 }
 
-export default TableCell;
+export default function TableCell(props) {
+  const {
+    table,
+    record,
+    rowData,
+    column,
+    rowIndex,
+    columnIndex,
+    activeRow,
+    isActive,
+    isSelected,
+    fixed,
+    lastFixed,
+    errorText,
+    getRowController,
+    cellRender,
+    cellStyle,
+    cellClassName,
+    model,
+  } = props;
+  const controllerRef = useRef(null);
+
+  const cell = makeCellHandle({
+    record,
+    column,
+    rowIndex,
+    columnIndex,
+    activeRow,
+    isActive,
+    isSelected,
+    errorText,
+    model,
+    setActive: () => table.setActiveCell(rowIndex, columnIndex, cell),
+    getController: () => {
+      if (!controllerRef.current) {
+        controllerRef.current = getRowController().createCellController(
+          cell,
+          rowData,
+          column
+        );
+      }
+      return controllerRef.current;
+    },
+  });
+
+  // event callbacks are read from the latest table props: the cell may be memoized
+  const forward = (name, e) => {
+    const callback = table.getProps()[name];
+    if (callback) callback(e, column, rowData, model, cell);
+  };
+
+  const onClick = e => {
+    forward('onCellClick', e);
+    // shift+click extends the selection: the active cell stays on the anchor
+    if (!e.shiftKey) cell.props.setActive();
+  };
+
+  const onMouseDown = e => {
+    if (e.button === 1) return;
+    forward('onCellMouseDown', e);
+
+    const extend = e.shiftKey && e.button === 0;
+    table.onSelectionDragStart(rowIndex, columnIndex, extend);
+    if (!extend) cell.props.setActive();
+  };
+
+  const onMouseMove = e => {
+    forward('onCellMouseMove', e);
+    table.onSelectionDragMove(rowIndex, columnIndex);
+  };
+
+  const onMouseUp = e => {
+    forward('onCellMouseUp', e);
+    table.onSelectionDragEnd(cell);
+  };
+
+  const content = cellRender
+    ? cellRender(column, rowData, cell)
+    : defaultContent(column, rowData);
+
+  const noBorder = column && column.nobordercell;
+  let className = 'ft-cell__container';
+  if (!noBorder)
+    className += isActive
+      ? ' ft-cell__container--active'
+      : ' ft-cell__container--normal';
+  className += ' disable-selection';
+  if (fixed) className += ' ft-fixed';
+  if (lastFixed) className += ' ft-fixed--last';
+  if (isSelected) className += ' ft-cell-selected';
+
+  if (cellClassName)
+    className = cellClassName(className, column, rowData, cell);
+
+  let style = errorText ? { border: '1px solid red' } : {};
+  if (cellStyle) style = cellStyle(style, column, rowData, cell) || style;
+
+  style = {
+    ...style,
+    width: `var(--ft-w-${columnIndex})`,
+    left: fixed ? `var(--ft-l-${columnIndex})` : style.left,
+  };
+  if (isSelected) style.backgroundColor = 'var(--ft-selection-bg, #BFBFFF)';
+
+  return (
+    <div
+      className={className}
+      title={errorText}
+      style={style}
+      data-ft-col={columnIndex}
+      role='gridcell'
+      aria-selected={isSelected}
+      onClick={onClick}
+      onDoubleClick={e => forward('onCellDoubleClick', e)}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onKeyDown={e => forward('onCellKeyDown', e)}
+      onKeyUp={e => forward('onCellKeyUp', e)}
+      draggable={false}
+    >
+      <div className='ft-cell__content'>{content}</div>
+    </div>
+  );
+}

@@ -1,98 +1,97 @@
 import React from 'react';
+import { columnLabel } from './layout';
 import '../styles/column-header-style.css';
 
-class ColumnHeader extends React.Component {
-  state = {
-    filterActive: false,
-    sortActive: false,
-    sorting: null,
-    hover: false,
-    resized: false,
-    startX: null,
-    startColumnWidth: null,
-    columnWidth: this.props.columnWidth,
-  };
+const { useRef, useEffect } = React;
 
-  toggleHover = () => {
-    this.setState(prevState => {
-      return {
-        hover: !prevState.hover,
-      };
-    });
-  };
+export default function ColumnHeader(props) {
+  const {
+    index,
+    column,
+    columnWidth,
+    fixed,
+    lastFixed,
+    headColRender,
+    onColumnHeaderClick,
+  } = props;
+  const resizing = useRef(null);
+  const suppressClick = useRef(false);
+  const cleanup = useRef(null);
 
-  onColumnWidth(columnWidth) {
-    columnWidth = this.props.onColumnWidth
-      ? this.props.onColumnWidth(columnWidth, this.props.index, this)
-      : columnWidth;
+  useEffect(() => () => cleanup.current && cleanup.current(), []);
 
-    columnWidth = columnWidth || this.props.defaultColumnWidth || 150;
+  // handle passed to callbacks; keeps the former `component.props` shape
+  const handle = { props: { index, column, columnWidth, fixed } };
 
-    return columnWidth;
-  }
+  const onResizeStart = event => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
 
-  resizeColumns = event => {
-    let diffWidth = event.pageX - this.state.startX;
+    const startX = event.pageX;
+    const startWidth = event.currentTarget.parentElement.getBoundingClientRect()
+      .width;
+    resizing.current = startWidth;
 
-    this.setState({
-      resized: true,
-      columnWidth: this.state.startColumnWidth + diffWidth,
-    });
-  };
-
-  handleColumnsResize = event => {
-    this.setState(
-      {
-        startX: event.pageX,
-        startColumnWidth: this.state.columnWidth,
-      },
-      () => {
-        document.addEventListener('mousemove', this.resizeColumns);
-        document.addEventListener('mouseup', this.removeListeners);
+    const onMove = e => {
+      resizing.current = startWidth + e.pageX - startX;
+      props.previewColumnWidth(index, resizing.current);
+    };
+    const onUp = () => {
+      cleanup.current();
+      if (resizing.current !== startWidth) {
+        // the click following mouseup must not be taken as a header click
+        suppressClick.current = true;
+        setTimeout(() => {
+          suppressClick.current = false;
+        }, 0);
+        props.commitColumnWidth(index, resizing.current, handle);
       }
-    );
+      resizing.current = null;
+    };
+
+    cleanup.current = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.body.classList.remove('ft-resizing');
+      cleanup.current = null;
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.body.classList.add('ft-resizing');
   };
 
-  removeListeners = () => {
-    this.onColumnWidth(this.state.columnWidth);
-    document.removeEventListener('mousemove', this.resizeColumns);
-    document.removeEventListener('mouseup', this.handleColumnsResize);
+  const onClick = () => {
+    if (suppressClick.current) return;
+    if (onColumnHeaderClick) onColumnHeaderClick(index);
   };
 
-  render() {
-    let content;
-    if (this.props.headColRender)
-      content = this.props.headColRender(this.props.column, this);
-    else content = this.props.column;
+  const content = headColRender
+    ? headColRender(column, handle)
+    : columnLabel(column);
 
-    let style = this.props.fixed ? {
-      position: 'sticky',
-      left: `${this.props.left}px`,
-      zIndex: '3'
-    } : {};
+  let className = 'ft-table--cell__header';
+  if (fixed) className += ' ft-fixed';
+  if (lastFixed) className += ' ft-fixed--last';
 
-    style.width = style.minWidth = style.maxWidth = this.state.resized
-      ? this.state.columnWidth
-      : this.props.columnWidth;
-
-    return (
+  return (
+    <div
+      className={className}
+      style={{
+        width: `var(--ft-w-${index})`,
+        left: fixed ? `var(--ft-l-${index})` : undefined,
+      }}
+      onClick={onClick}
+      role='columnheader'
+      title={typeof content === 'string' ? content : undefined}
+    >
+      {content}
       <div
-        className='ft-table--cell__header'
-        style={style}
-        onClick={() => {
-          this.props.onColumnHeaderClick(this.props.index);
-        }}
-        onMouseEnter={this.toggleHover}
-        onMouseLeave={this.toggleHover}
-      >
-        {content}
-        <div
-          className='ft-table--cell__header--resizable'
-          onMouseDown={this.handleColumnsResize}
-        />
-      </div>
-    );
-  }
+        className='ft-table--cell__header--resizable'
+        onMouseDown={onResizeStart}
+        onClick={e => e.stopPropagation()}
+      />
+    </div>
+  );
 }
-
-export default ColumnHeader;

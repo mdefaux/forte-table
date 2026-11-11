@@ -1,0 +1,63 @@
+.ft-table {
+  position: relative;
+  overflow: auto;
+  outline: none;
+  font-size: 13px;
+  background-color: #fff;
+}
+
+.ft-table__inner {
+  width: max-content;
+  min-width: 100%;
+}
+
+.ft-row {
+  display: flex;
+  position: relative;
+  z-index: 1;
+}
+
+/* active row stays above the next rows, so popups rendered by cells are not hidden */
+.ft-row--active {
+  z-index: 2;
+}
+
+.ft-row__heading {
+  flex: none;
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  background-color: #fff;
+  border: 1px solid #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ft-row__heading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.ft-row--selected .ft-row__heading {
+  background-color: var(--ft-selection-bg, #bfbfff);
+}
+
+/* columns kept visible while scrolling horizontally (columnFixedCount) */
+.ft-fixed {
+  position: sticky;
+  z-index: 2;
+  background-color: #fff;
+}
+
+.ft-fixed--last {
+  box-shadow: 2px 0 3px -1px rgba(0, 0, 0, 0.15);
+}
+
+body.ft-resizing,
+body.ft-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}

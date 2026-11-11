@@ -1,22 +1,20 @@
 .ft-table--header--container {
   position: sticky;
   top: 0;
-  line-height: 28px;
   z-index: 20;
-  /*CODICE SOTTO NECESSARIO PER CORRETTA VISUALIZZAZIONE OBJECTLINK*/
   display: flex;
   flex-direction: row;
-  /*display: table-header-group;*/
   height: 40px;
+  line-height: 28px;
   margin-bottom: 2px;
   background-color: #fff;
 }
 
 .ft-table--header--content {
-  min-width: 50px;
+  flex: none;
   height: 40px;
-  background-color: white;
   position: sticky;
-  left: 0px;
-  z-index: '3';
+  left: 0;
+  z-index: 3;
+  background-color: #fff;
 }

@@ -1,8 +1,7 @@
-import config from "./config-styles";
+import config from './config-styles';
 
 export default {
   root: {
-    display: "table-row-group",
-    fontSize: config.main.fontSize
-  }
+    fontSize: config.main.fontSize,
+  },
 };

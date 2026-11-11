@@ -1,615 +1,518 @@
 import React from 'react';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
+import { createTableStore, toRect, sameRect } from './tableStore';
+import {
+  columnKey,
+  columnVars,
+  DEFAULT_COLUMN_WIDTH,
+  MIN_COLUMN_WIDTH,
+} from './layout';
+import { makeCellHandle } from './cellHandle';
+import '../styles/forte-table.css';
 
-/** ForteDataGrid displays a table given a set of columns and a set of rows.
- *  Cells will receive the column and the row data to draw itself:
- *  redefine CellModel in order to customize the aspect of the content.
+const {
+  useRef,
+  useState,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+  useCallback,
+  useMemo,
+} = React;
+
+const isEditable = target =>
+  !!target &&
+  (target.isContentEditable ||
+    /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
+
+/** ForteTable displays a grid given a set of columns and a set of rows.
+ *  Cells receive the column and the row data and delegate their content to `cellRender`.
  *
+ *  Main props:
+ *  - rows(): array of records; columns(): array of columns (strings or objects with `name`)
+ *  - cellRender(column, row, cell), cellStyle(style, column, row, cell), cellClassName(className, column, row, cell)
+ *  - headColRender(column, header), headRowRender(record)
+ *  - columnFixedCount: number of leading columns kept visible while scrolling horizontally
+ *  - onColumnWidth(width, column, header): resolves/receives column widths
+ *  - onCellSelectionChange(selectedColumns, selectedRows, cell)
  */
-class ForteTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.dragStartCells = false; // keeps the starting cell of a drag, if false no drag is currently active
-    this.activeCell = false;
-    this.activeRow = false;
-
-    if (props.createController)
-      // if there is a controller factory, call it
-      this.state.tableController = props.createController(this);
-  }
-
-  state = {}
-
-  getColumnsWidth() {
-    return this.props.columns().map((column, index) => {
-      let columnWidth;
-
-      if (this.props.onColumnWidth)
-        columnWidth = this.props.onColumnWidth(columnWidth, column);
-
-      columnWidth = columnWidth || this.props.defaultColumnWidth || 150;
-
-      return columnWidth;
-    });
-  }
-
-  /**Callback invoked by ColumnHeader when resized.
-   *
-   * @param columnWidth - the new value of the column width after resizing
-   * @param index - index of the column into model.
-   * @param headerComponent - the headerColumn component that has been sized.
-   * @return {*} the new value of the column width, eventually modified by a custom callback.
-   */
-  onColumnWidth = (columnWidth, index, headerComponent) => {
-    let column = this.props.columns()[index];
-
-    if (this.props.onColumnWidth)
-      columnWidth = this.props.onColumnWidth(
-        columnWidth,
-        column,
-        headerComponent
-      );
-
-    // updates the state... and redraws the table
-    // let columnsWidth = this.state.columnsWidth; // gets the array of the columns width
-    // columnsWidth[index] = columnWidth; // updates the value in the corresponding position
-    // this.setState({ columnsWidth: columnsWidth }); // saves the array of columns width into state (and refresh the whole table)
-
-    this.forceUpdate();
-
-    return columnWidth;
-  };
-
-  /** Checks if new row is to be rendered
-   *
-   */
-  componentDidUpdate() {}
-
-  /**Saves an array of all row components as soon as they are rendered
-   * 
-   * @param {*} rows 
-   */
-  onRowsRendered( rows ) {
-    this.rowsRendered = rows;
-  }
-
-  /**Sets a row as active. Memorizes the row index and eventually the row id.
-   *
-   * @param row - the row object corresponding to active row
-   * @param rowIndex - index of the active row
-   */
-  setActiveRow = (row, rowIndex, colIndex, rowComponent) => {
-    // if same row active, does nothing
-    if (this.activeRow === rowComponent ) {
-      this.activeRow.setActive(true, colIndex);
-      return;
-    }
-
-    // re-render previous active row
-    if (this.activeRow) {
-      this.activeRow.setActive(false);
-    }
-
-    // sets the new refs to active row
-    this.activeRowIndex = rowIndex;
-    this.activeRow = rowComponent;
-    this.activeRow.setActive(true, colIndex);
-
-    // calls callback
-    if (this.props.setActiveRow) {
-      return this.props.setActiveRow(row, rowIndex);
-    }
-  };
-
-  /**Sets a column as active. Memorizes the row index and eventually the row id.
-   *
-   * @param column
-   * @param columnIndex
-   */
-  setActiveColumn = (column, columnIndex) => {
-    this.activeColumn = column;
-    this.activeColIndex = columnIndex;
-
-    if (this.props.setActiveColumn)
-      return this.props.setActiveColumn(column, columnIndex);
-  };
-
-  /**Sets the active cell. Memorizes the row and column index of the cell.
-   *
-   * @param cellComponent - cell to be activated.
-   */
-  setActiveCell = (cellComponent, rowComponent) => {
-    if (cellComponent === this.activeCell){ 
-      return;
-    }
-
-    this.activeCell = cellComponent;
-    
-    this.setActiveRow(
-      rowComponent, // cellComponent.props.row, 
-      cellComponent.props.rowIndex, cellComponent.props.columnIndex, 
-      rowComponent );
-    
-    this.setActiveColumn(cellComponent.props.column, cellComponent.props.columnIndex);
-
-    if (this.props.setActiveCell)
-      return this.props.setActiveCell(
-        cellComponent,
-        cellComponent.props.columnIndex,
-        cellComponent.props.rowIndex
-      );
-  };
-
-  notifyActiveCell = cell => {
-    if (!cell) {
-      debugger;
-    }
-
-    if (cell === this.state.activeCell) {
-      return;
-    }
-
-    if (this.props.setActiveCell)
-      return this.props.setActiveCell(
-        cell,
-        cell.props.columnIndex,
-        cell.props.rowIndex
-      );
-  };
-
-  getRowsCount() {
-    return this.props.rowsCount;
-  }
-
-  getColsCount() {
-    return this.props.colsCount || this.props.columns().length;
-  }
-
-  /**Sets the active cell. Memorizes the row and column index of the cell.
-   *
-   * @param cell - cell to be activated.
-   */
-  setActiveNext = direction => {
-    direction = direction || 1;
-
-    let colsCount = this.getColsCount();
-    let rowsCount = this.getRowsCount();
-    let newColIndex = this.state.activeColIndex + direction;
-    let newRowIndex = this.state.activeRowIndex;
-
-    if (newColIndex >= colsCount) {
-      newColIndex = 0;
-      newRowIndex++;
-
-      if (newRowIndex >= rowsCount) {
-        newRowIndex = 0;
-      }
-    }
-    if (newColIndex < 0) {
-      newColIndex = colsCount - 1;
-      newRowIndex--;
-
-      if (newRowIndex < 0) {
-        newRowIndex = rowsCount - 1;
-      }
-    }
-    this.setActiveCoords( newColIndex, newRowIndex );
-  }
-
-  startSelectionAt( colIndex, rowIndex ) {
-    
-    this.dragStartCells = {
-      col: colIndex,
-      row: rowIndex,
-    };  
-  }
-
-
-  moveCursor( toEnd, selection ) {
-    if( this.props.columnIndex === 0 )
-      return;
-      
-    if( selection && !this.dragStartCells ) {
-      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
-    }
-    if( !selection ) {
-      this.dragStartCells = false;
-    }
-
-    let newCoord = toEnd ? 0 : this.state.activeColIndex - 1;
-    this.setActiveCoords( newCoord, this.state.activeRowIndex );
-
-    if( selection ) {
-      this.onSelectionDragMoveAt( newCoord, this.state.activeRowIndex );
-      this.onSelectionDragEnd();
-    }
-  }
-
-
-  goLeft( toEnd, selection ) {
-    if( this.props.columnIndex === 0 )
-      return;
-      
-    if( selection && !this.dragStartCells ) {
-      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
-    }
-    if( !selection ) {
-      this.dragStartCells = false;
-    }
-
-    let newCoord = toEnd ? 0 : this.state.activeColIndex - 1;
-    this.setActiveCoords( newCoord, this.state.activeRowIndex );
-
-    if( selection ) {
-      this.onSelectionDragMoveAt( newCoord, this.state.activeRowIndex );
-      this.onSelectionDragEnd();
-    }
-  }
-
-  goRight( toEnd, selection ) {
-    if( selection && !this.dragStartCells ) {
-      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
-    }
-    if( !selection ) {
-      this.dragStartCells = false;
-    }
-
-    let newCoord = toEnd ? this.getColsCount() -1 : this.state.activeColIndex + 1;
-    this.setActiveCoords( newCoord, this.state.activeRowIndex );
-
-    if( selection ) {
-      this.onSelectionDragMoveAt( newCoord, this.state.activeRowIndex );
-      this.onSelectionDragEnd();
-    }
-  }
-
-  goUp( toEnd, selection ) {
-    if( selection && !this.dragStartCells ) {
-      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
-    }
-
-    if( !selection ) {
-      this.dragStartCells = false;
-    }
-
-    let newCoord = toEnd ? 0 : this.state.activeRowIndex - 1;
-    this.setActiveCoords( this.state.activeColIndex, newCoord );
-
-    if( selection ) {
-      this.onSelectionDragMoveAt( this.state.activeColIndex, newCoord );
-      this.onSelectionDragEnd();
-    }
-  }
-
-  goDown( toEnd, selection ) {
-    if( selection && !this.dragStartCells ) {
-      this.startSelectionAt( this.state.activeColIndex, this.state.activeRowIndex );
-    }
-
-    if( !selection ) {
-      this.dragStartCells = false;
-    }
-
-    let newCoord = toEnd ? this.getRowsCount() -1 : this.state.activeRowIndex + 1;
-    this.setActiveCoords( this.state.activeColIndex, newCoord );
-
-    if( selection ) {
-      this.onSelectionDragMoveAt( this.state.activeColIndex, newCoord );
-      this.onSelectionDragEnd();
-    }
-  }
-
-  /**Sets the active cell. Memorizes the row and column index of the cell.
-   *
-   * @param cell - cell to be activated.
-   */
-  setActiveCoords( newColIndex, newRowIndex ) {
-    // if out of range, does nothing
-    if (newColIndex >= this.getColsCount() || newColIndex < 0 
-      || newRowIndex >= this.getRowsCount() || newRowIndex < 0 ) 
-    {
-      return;
-    }
-
-    // TODO: refresh old row
-    if( this.activeRowIndex !== newRowIndex ) {
-      // 
-    }
-
-    this.activeRowIndex = newRowIndex;
-    this.activeColIndex = newColIndex;
-
-    // TODO: refresh new row
-  };
-
-  /**Handler called when a mouse down event generated on a cell
-   * setups and starts a dragging of selection
-   * 
-   * @param {Component} cell 
-   * @returns false
-   */
-  onSelectionDragStart = cell => {
-    this.dragStartCells = {
-      col: cell.props.columnIndex,
-      row: cell.props.rowIndex,
-    };
-
-    let selectedRows = {};
-    selectedRows[cell.props.rowIndex] = {};
-
-    if (this.selectedStartCoord && this.selectedEndCoord) {
-      this.refreshRowSelection(
-        this.selectedStartCoord.row,
-        this.selectedEndCoord.row,
-        false);
-    }
-
-    // was this.setState({
-    this.mouseDragging= true;
-    this.selectedCells= selectedRows;
-    this.selectedStartCoord= false;
-    this.selectedEndCoord= false;
-      
-    return false;
-  };
-
-  /**Handler called when mouse moves over a cell.
-   * If a drag mode is active, updates the selected zone.
-   * 
-   * @param {Component} cell 
-   * @returns 
-   */
-  onSelectionDragMove = cell => {
-    if (!this.dragStartCells || !this.mouseDragging)
-      // if there is no drag active, does nothing
-      return;
-
-    this.onSelectionDragMoveAt(cell.props.columnIndex, cell.props.rowIndex);
-  };
-
-  /**Updates the selection zone to given coords
-   * 
-   * @param {*} columnIndex 
-   * @param {*} rowIndex 
-   * @param {*} optStartCol 
-   * @param {*} optStartRow 
-   * @returns 
-   */
-  onSelectionDragMoveAt(columnIndex, rowIndex, optStartCol, optStartRow ) {
-    let selectedRows = {}; // empties the selected value
-
-    // defines start and end coordinates: end coords should be > than start.
-    // takes the min coordinates from starting cell and pointed cell
-    let startCoord = {
-      col: Math.min( optStartCol || this.dragStartCells.col, columnIndex),
-      row: Math.min( optStartRow || this.dragStartCells.row, rowIndex),
-    };
-    // takes the max coordinates from starting cell and pointed cell
-    let endCoord = {
-      col: Math.max( optStartCol || this.dragStartCells.col, columnIndex),
-      row: Math.max( optStartRow ||this.dragStartCells.row, rowIndex),
-    };
-
-    // Avoids the selection of the single cell when user click and move on the same cell
-    // if drag selection ends where started, clears entire selection (?)
-    if (startCoord.col === endCoord.col && startCoord.row === endCoord.row) {
-      
-      this.refreshRowSelection( 
-        this.selectedStartCoord.row, 
-        this.selectedEndCoord.row, 
-        false );
-
-      this.selectedCells= {};
-      this.selectedStartCoord= startCoord;
-      this.selectedEndCoord= endCoord;
-      
-      return true;
-    }
-
-    // fills the array of selected rows with an array of selected cells
-    for (let r = startCoord.row; r <= endCoord.row; r++) {
-      selectedRows[r] = {};
-      for (let c = startCoord.col; c <= endCoord.col; c++) {
-        selectedRows[r][c] = { col: c, row: r };
-      }
-    }
-
-    // checks if nothing has varied
-    if (
-      this.selectedStartCoord &&
-      this.selectedStartCoord.col === startCoord.col &&
-      this.selectedStartCoord.row === startCoord.row &&
-      this.selectedEndCoord &&
-      this.selectedEndCoord.col === endCoord.col &&
-      this.selectedEndCoord.row === endCoord.row
-    ) {
-      return false;
-    }
-
-    // updates only the selected rows
-    const startUpdate = Math.min( this.selectedStartCoord.row, startCoord.row );
-    const endUpdate = Math.max( this.selectedEndCoord.row, endCoord.row );
-    this.refreshRowSelection( startUpdate, endUpdate, selectedRows );
-
-    // stores the selection coordinates in state and refresh the rendering of whole table
-    this.selectedCells= selectedRows;
-    this.selectedStartCoord= startCoord;
-    this.selectedEndCoord= endCoord;
-
-    return false;
-  };
-
-  refreshRowSelection( startUpdate, endUpdate, selectedRows ) {
-    for( let r= startUpdate; r <= endUpdate; r++ ) {
-      if ( !this.rowsRendered[r] ) {
-        console.error( `ForteTable: rowsRendered[ ${r} ] does not exists.`);
-        break;
-      }
-      this.rowsRendered[r].selectCells( selectedRows[r] );
-    }
-  }
-
-  /**Handler called when mouse up. Stops dragging selection mode.
-   * 
-   * @param {*} cell 
-   */
-  onSelectionDragEnd = cell => {
-    this.mouseDragging = false;
-
-    if (this.props.onCellSelectionChange) {
-      this.props.onCellSelectionChange(
-        this.getSelectedColumns(),
-        this.getSelectedRows(),
-        cell
-      );
-    }
-  };
-
-  getSelectedColumns = () => {
-    if (!this.selectedStartCoord) return [];
-
-    let columns = this.props.columns();
-
-    // returns a subset copy of the array from start selection to end selection
-    return columns.slice(
-      this.selectedStartCoord.col,
-      this.selectedEndCoord.col + 1
+const ForteTable = forwardRef(function ForteTable(props, ref) {
+  const storeRef = useRef(null);
+  if (!storeRef.current) storeRef.current = createTableStore();
+  const store = storeRef.current;
+
+  const containerRef = useRef(null);
+  const apiRef = useRef(null);
+  const propsRef = useRef(props);
+  propsRef.current = props;
+
+  // interaction state that must not trigger renders
+  const dragging = useRef(false);
+  const extent = useRef(null);
+
+  const [widthOverrides, setWidthOverrides] = useState({});
+
+  const columns = props.columns() || [];
+  const rows = props.rows() || [];
+  const rowsCount = props.rowsCount != null ? props.rowsCount : rows.length;
+  const colsCount = props.colsCount || columns.length;
+  const fixedCount = Math.min(props.columnFixedCount || 0, columns.length);
+
+  const columnsWidth = columns.map((column, index) => {
+    const override = widthOverrides[columnKey(column, index)];
+    if (override != null) return override;
+
+    const fromCallback = props.onColumnWidth
+      ? props.onColumnWidth(undefined, column)
+      : undefined;
+    const fromColumn =
+      column && typeof column === 'object'
+        ? column.userColumnWidth || column.defaultColumnWidth
+        : undefined;
+
+    return (
+      fromCallback ||
+      fromColumn ||
+      props.defaultColumnWidth ||
+      DEFAULT_COLUMN_WIDTH
     );
+  });
+
+  const { vars } = columnVars(columnsWidth, fixedCount);
+
+  // latest values read by stable callbacks
+  const ctx = useRef();
+  ctx.current = {
+    columns,
+    rows,
+    rowsCount,
+    colsCount,
+    fixedCount,
+    columnsWidth,
   };
 
-  getSelectedRows = () => {
-    if (!this.selectedStartCoord) return [];
-
-    let rows = this.props.rows();
-
-    // returns a subset copy of the array from start selection to end selection
-    return rows.slice(
-      this.selectedStartCoord.row,
-      this.selectedEndCoord.row + 1
+  const controllerRef = useRef(null);
+  const getTableController = useCallback(() => {
+    const p = propsRef.current;
+    if (!controllerRef.current && p.createController)
+      controllerRef.current = p.createController(apiRef.current);
+    return (
+      controllerRef.current || (p.getTableController && p.getTableController())
     );
-  };
+  }, []);
 
-  onKeyDown = evt => {
-    evt = evt || window.event;
-    
-    if (this.props.onKeyDown) this.props.onKeyDown(evt, this);
-    
-    if (evt.keyCode === 9) {
-      if (evt.shiftKey) {
-        this.setActiveNext(-1);
+  /* ---------------------------- selection ---------------------------- */
+
+  const getSelectedColumns = useCallback(() => {
+    const { selection } = store.getState();
+    if (!selection) return [];
+    return ctx.current.columns.slice(selection.c0, selection.c1 + 1);
+  }, [store]);
+
+  const getSelectedRows = useCallback(() => {
+    const { selection } = store.getState();
+    if (!selection) return [];
+    return ctx.current.rows.slice(selection.r0, selection.r1 + 1);
+  }, [store]);
+
+  const setSelection = useCallback(
+    rect => {
+      // a single cell is not considered a selection
+      const next =
+        rect && (rect.c0 !== rect.c1 || rect.r0 !== rect.r1) ? rect : null;
+      if (!sameRect(store.getState().selection, next)) {
+        store.setState({ selection: next });
+      }
+    },
+    [store]
+  );
+
+  const notifySelection = useCallback(
+    cell => {
+      const p = propsRef.current;
+      if (p.onCellSelectionChange) {
+        p.onCellSelectionChange(getSelectedColumns(), getSelectedRows(), cell);
+      }
+    },
+    [getSelectedColumns, getSelectedRows]
+  );
+
+  /* ------------------------------ active ------------------------------ */
+
+  const buildHandle = useCallback(
+    (rowIndex, columnIndex) =>
+      makeCellHandle({
+        record: ctx.current.rows[rowIndex],
+        column: ctx.current.columns[columnIndex],
+        rowIndex,
+        columnIndex,
+        activeRow: true,
+        isActive: true,
+        isSelected: false,
+      }),
+    []
+  );
+
+  const setActiveCell = useCallback(
+    (rowIndex, columnIndex, cellHandle) => {
+      const {
+        colsCount: cc,
+        rowsCount: rc,
+        rows: rs,
+        columns: cs,
+      } = ctx.current;
+      if (
+        columnIndex < 0 ||
+        columnIndex >= cc ||
+        rowIndex < 0 ||
+        rowIndex >= rc
+      )
+        return;
+
+      const prev = store.getState();
+      if (prev.activeRow === rowIndex && prev.activeCol === columnIndex) return;
+
+      store.setState({ activeRow: rowIndex, activeCol: columnIndex });
+
+      const p = propsRef.current;
+      if (prev.activeRow !== rowIndex && p.setActiveRow)
+        p.setActiveRow(rs[rowIndex], rowIndex);
+      if (prev.activeCol !== columnIndex && p.setActiveColumn)
+        p.setActiveColumn(cs[columnIndex], columnIndex);
+      if (p.setActiveCell)
+        p.setActiveCell(
+          cellHandle || buildHandle(rowIndex, columnIndex),
+          columnIndex,
+          rowIndex
+        );
+    },
+    [store, buildHandle]
+  );
+
+  const scrollToCell = useCallback((rowIndex, columnIndex) => {
+    const el =
+      containerRef.current &&
+      containerRef.current.querySelector(
+        `[data-ft-row="${rowIndex}"] [data-ft-col="${columnIndex}"]`
+      );
+    if (el && el.scrollIntoView)
+      el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, []);
+
+  /* --------------------------- mouse dragging --------------------------- */
+
+  // anchor is the fixed corner of the selection, focus the moving one
+  const applyExtent = useCallback(
+    (anchor, focus) => {
+      extent.current = { anchor, focus };
+      setSelection(toRect(anchor, focus));
+    },
+    [setSelection]
+  );
+
+  // with `extend` (shift+click) the selection grows from the current active cell
+  const onSelectionDragStart = useCallback(
+    (rowIndex, columnIndex, extend) => {
+      const { activeRow, activeCol } = store.getState();
+      const target = { row: rowIndex, col: columnIndex };
+      dragging.current = true;
+
+      if (extend && activeRow >= 0) {
+        applyExtent({ row: activeRow, col: activeCol }, target);
       } else {
-        this.setActiveNext(1);
+        extent.current = { anchor: target, focus: target };
+        setSelection(null);
       }
+    },
+    [store, applyExtent, setSelection]
+  );
 
+  const onSelectionDragMove = useCallback(
+    (rowIndex, columnIndex) => {
+      if (!dragging.current || !extent.current) return;
+      const { anchor } = extent.current;
+      applyExtent(anchor, {
+        row: rowIndex,
+        col: anchor.fullRow ? ctx.current.colsCount - 1 : columnIndex,
+      });
+    },
+    [applyExtent]
+  );
+
+  const onSelectionDragEnd = useCallback(
+    cell => {
+      if (!dragging.current) return;
+      dragging.current = false;
+      notifySelection(cell);
+    },
+    [notifySelection]
+  );
+
+  // clicking/dragging on row headings selects whole records
+  const onRowHeadingMouseDown = useCallback(
+    (rowIndex, event) => {
+      if (event.button !== 0) return;
+      const { activeRow } = store.getState();
+      const anchorRow = event.shiftKey && activeRow >= 0 ? activeRow : rowIndex;
+
+      if (anchorRow === rowIndex) setActiveCell(rowIndex, 0);
+      dragging.current = true;
+      applyExtent(
+        { row: anchorRow, col: 0, fullRow: true },
+        { row: rowIndex, col: ctx.current.colsCount - 1 }
+      );
+    },
+    [store, setActiveCell, applyExtent]
+  );
+
+  // ends a drag released outside the cells
+  useEffect(() => {
+    const onUp = () => onSelectionDragEnd();
+    document.addEventListener('mouseup', onUp);
+    return () => document.removeEventListener('mouseup', onUp);
+  }, [onSelectionDragEnd]);
+
+  /* ----------------------------- keyboard ----------------------------- */
+
+  const clamp = (rowIndex, columnIndex) => ({
+    row: Math.max(0, Math.min(ctx.current.rowsCount - 1, rowIndex)),
+    col: Math.max(0, Math.min(ctx.current.colsCount - 1, columnIndex)),
+  });
+
+  const moveActive = useCallback(
+    (rowIndex, columnIndex) => {
+      const { row, col } = clamp(rowIndex, columnIndex);
+      extent.current = null;
+      setActiveCell(row, col);
+      scrollToCell(row, col);
+
+      if (store.getState().selection) {
+        setSelection(null);
+        notifySelection(buildHandle(row, col));
+      }
+    },
+    [
+      store,
+      setActiveCell,
+      scrollToCell,
+      setSelection,
+      notifySelection,
+      buildHandle,
+    ]
+  );
+
+  // keeps the active cell and moves the focus corner of the selection
+  const extendTo = useCallback(
+    (rowIndex, columnIndex) => {
+      const focus = clamp(rowIndex, columnIndex);
+      const { activeRow, activeCol } = store.getState();
+      const anchor = extent.current
+        ? extent.current.anchor
+        : { row: activeRow, col: activeCol };
+
+      applyExtent(anchor, focus);
+      scrollToCell(focus.row, focus.col);
+      notifySelection(buildHandle(focus.row, focus.col));
+    },
+    [store, applyExtent, scrollToCell, notifySelection, buildHandle]
+  );
+
+  const setActiveNext = useCallback(
+    (direction = 1) => {
+      const { activeRow, activeCol } = store.getState();
+      const { rowsCount: rc, colsCount: cc } = ctx.current;
+      if (activeRow < 0) return moveActive(0, 0);
+
+      let c = activeCol + direction;
+      let r = activeRow;
+      if (c >= cc) {
+        c = 0;
+        r = r + 1 >= rc ? 0 : r + 1;
+      }
+      if (c < 0) {
+        c = cc - 1;
+        r = r - 1 < 0 ? rc - 1 : r - 1;
+      }
+      moveActive(r, c);
+    },
+    [store, moveActive]
+  );
+
+  const onKeyDown = evt => {
+    if (props.onKeyDown) props.onKeyDown(evt, apiRef.current);
+    if (evt.defaultPrevented) return;
+
+    if (evt.key === 'Tab') {
+      setActiveNext(evt.shiftKey ? -1 : 1);
       evt.preventDefault();
+      return;
     }
 
-    if (evt.key === 'ArrowUp') {
-      // up arrow
-      this.goUp( evt.ctrlKey, evt.shiftKey );
+    const { activeRow, activeCol } = store.getState();
+    if (isEditable(evt.target) || activeRow < 0) return;
+
+    const { rowsCount: rc, colsCount: cc } = ctx.current;
+    const toEnd = evt.ctrlKey || evt.metaKey;
+    const base =
+      evt.shiftKey && extent.current
+        ? extent.current.focus
+        : { row: activeRow, col: activeCol };
+    let target;
+
+    switch (evt.key) {
+      case 'ArrowUp':
+        target = [toEnd ? 0 : base.row - 1, base.col];
+        break;
+      case 'ArrowDown':
+        target = [toEnd ? rc - 1 : base.row + 1, base.col];
+        break;
+      case 'ArrowLeft':
+        target = [base.row, toEnd ? 0 : base.col - 1];
+        break;
+      case 'ArrowRight':
+        target = [base.row, toEnd ? cc - 1 : base.col + 1];
+        break;
+      default:
+        return;
     }
 
-    if (evt.key === 'ArrowRight') {
-      // right arrow
-      this.goRight( evt.ctrlKey, evt.shiftKey );
-    }
-
-    if (evt.key === 'ArrowDown') {
-      // down arrow
-      this.goDown( evt.ctrlKey, evt.shiftKey );
-    }
-
-    if (evt.key === 'ArrowLeft') {
-      // left arrow
-      this.goLeft( evt.ctrlKey, evt.shiftKey );
-    }
+    evt.preventDefault();
+    if (evt.shiftKey) extendTo(target[0], target[1]);
+    else moveActive(target[0], target[1]);
   };
 
-  renderBody( style = {}, columnRangeStart, columnRangeEnd, columnInactiveCount ) {
-    const columnsWidth = this.getColumnsWidth();
-    return (
-      <TableBody
-        rows={this.props.rows}
-        rowsCount={this.getRowsCount()}
-        columns={this.props.columns}
-        columnRangeStart={columnRangeStart}
-        columnRangeEnd={columnRangeEnd}
-        columnInactiveCount={columnInactiveCount}
-        style={ style }
-        cellRender={this.props.cellRender}
-        cellStyle={this.props.cellStyle}
-        cellClassName={this.props.cellClassName}
-        columnsWidth={columnsWidth}
-        headRowRender={this.props.headRowRender}
-        tableController={this.state.tableController}
-        getTableController={this.props.getTableController}
-        type={this.props.type ? this.props.type : 'small'}
-        setActiveCell={this.setActiveCell}
-        activeRowIndex={this.activeRowIndex}
-        activeColIndex={this.activeColIndex}
-        onCellClick={this.props.onCellClick}
-        onCellDoubleClick={this.props.onCellDoubleClick}
-        onCellMouseDown={this.props.onCellMouseDown}
-        onCellMouseMove={this.props.onCellMouseMove}
-        onCellMouseUp={this.props.onCellMouseUp}
-        onCellKeyDown={this.props.onCellKeyDown}
-        onCellKeyUp={this.props.onCellKeyUp}
-        selectedCells={this.state.selectedCells}
-        onSelectionDragStart={this.onSelectionDragStart}
-        onSelectionDragMove={this.onSelectionDragMove}
-        onSelectionDragEnd={this.onSelectionDragEnd}
-        newRow={this.props.newRow}
-        notifyActiveCell={this.notifyActiveCell}
-        readOnly={this.props.readOnly}
-        onRowsRendered={(rows)=>this.onRowsRendered(rows)}
-      />
-    );
-  }
+  /* --------------------------- column resizing --------------------------- */
 
-  renderHeader( style, columnRangeStart, columnRangeEnd, columnInactiveCount) {
-    return <TableHeader
-      columns={this.props.columns}
-      columnRangeStart={columnRangeStart}
-      columnRangeEnd={columnRangeEnd}
-      columnInactiveCount={columnInactiveCount}
-      style={ style }
-      headColRender={this.props.headColRender}
-      onColumnHeaderClick={this.props.onColumnHeaderClick || (index => { })}
-      sorting={this.state.sorting}
-      loggedUser={this.props.loggedUser}
-      onColumnWidth={this.onColumnWidth}
-      columnsWidth={this.getColumnsWidth()} />;
-  }
+  // while dragging only CSS variables are updated: the body is not re-rendered
+  const previewColumnWidth = useCallback((index, width) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const widths = ctx.current.columnsWidth.slice();
+    widths[index] = Math.max(MIN_COLUMN_WIDTH, width);
+    const { vars: next } = columnVars(widths, ctx.current.fixedCount);
+    Object.keys(next).forEach(name => el.style.setProperty(name, next[name]));
+  }, []);
 
-  /**Renders ForteDataGrid component.
-   * Composes a Toolbar, a table header and a table body.
-   *
-   * @returns {XML}
-   */
-  render() {
-    const columnRangeStart = this.props.columnFixedCount ? 0 : undefined;
-    const columnRangeEnd = this.props.columnFixedCount;
-    const tableHeader = this.renderHeader( {}, undefined, columnRangeEnd, undefined );
-    const tableBody = this.renderBody( {backgroundColor: 'white'}, columnRangeStart, columnRangeEnd );
+  const commitColumnWidth = useCallback((index, width, header) => {
+    const column = ctx.current.columns[index];
+    let finalWidth = Math.max(MIN_COLUMN_WIDTH, width);
+    const p = propsRef.current;
+    if (p.onColumnWidth)
+      finalWidth = p.onColumnWidth(finalWidth, column, header) || finalWidth;
 
-    return (
-      <div
-        style={{
-          ...this.props.style, position: 'relative'
-        }}
-        className="forteTableContainer"
-        onKeyDown={this.onKeyDown}
-        ref={b => {
-          this.tableBody = b;
-        }}
-      >
-        {tableHeader}
-        {tableBody}
+    setWidthOverrides(prev => ({
+      ...prev,
+      [columnKey(column, index)]: finalWidth,
+    }));
+    return finalWidth;
+  }, []);
+
+  /* ---------------------------- imperative API ---------------------------- */
+
+  apiRef.current = {
+    getSelectedColumns,
+    getSelectedRows,
+    getActiveCoords: () => {
+      const { activeRow, activeCol } = store.getState();
+      return { row: activeRow, col: activeCol };
+    },
+    setActiveCoords: (columnIndex, rowIndex) =>
+      moveActive(rowIndex, columnIndex),
+    setActiveNext,
+    selectRange: (startCol, startRow, endCol, endRow) => {
+      applyExtent(
+        { col: startCol, row: startRow },
+        { col: endCol, row: endRow }
+      );
+      notifySelection();
+    },
+    clearSelection: () => {
+      extent.current = null;
+      setSelection(null);
+      notifySelection();
+    },
+    scrollToCell,
+    get element() {
+      return containerRef.current;
+    },
+    get scrollTop() {
+      return containerRef.current ? containerRef.current.scrollTop : 0;
+    },
+    set scrollTop(value) {
+      if (containerRef.current) containerRef.current.scrollTop = value;
+    },
+    get scrollHeight() {
+      return containerRef.current ? containerRef.current.scrollHeight : 0;
+    },
+  };
+
+  useImperativeHandle(ref, () => apiRef.current);
+
+  // stable across renders: memoized rows only re-render when their own inputs change
+  const table = useMemo(
+    () => ({
+      store,
+      getProps: () => propsRef.current,
+      getTableController,
+      setActiveCell,
+      onSelectionDragStart,
+      onSelectionDragMove,
+      onSelectionDragEnd,
+      onRowHeadingMouseDown,
+      previewColumnWidth,
+      commitColumnWidth,
+    }),
+    [
+      store,
+      getTableController,
+      setActiveCell,
+      onSelectionDragStart,
+      onSelectionDragMove,
+      onSelectionDragEnd,
+      onRowHeadingMouseDown,
+      previewColumnWidth,
+      commitColumnWidth,
+    ]
+  );
+
+  return (
+    <div
+      ref={containerRef}
+      className={`forteTableContainer ft-table${
+        props.className ? ` ${props.className}` : ''
+      }`}
+      style={{ ...vars, ...props.style }}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      role='grid'
+      aria-rowcount={rowsCount}
+      aria-colcount={colsCount}
+    >
+      <div className='ft-table__inner'>
+        <TableHeader
+          table={table}
+          columns={columns}
+          columnsWidth={columnsWidth}
+          fixedCount={fixedCount}
+          headColRender={props.headColRender}
+          onColumnHeaderClick={props.onColumnHeaderClick}
+        />
+        <TableBody
+          table={table}
+          rows={rows}
+          columns={columns}
+          fixedCount={fixedCount}
+          cellRender={props.cellRender}
+          cellStyle={props.cellStyle}
+          cellClassName={props.cellClassName}
+          headRowRender={props.headRowRender}
+          type={props.type || 'small'}
+          model={props.model}
+        />
       </div>
-    );
-  }
-}
+    </div>
+  );
+});
 
 export default ForteTable;

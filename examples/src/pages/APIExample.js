@@ -1,5 +1,5 @@
-import React from 'react';
-import ForteTable from '../../../src/';
+import React, { useEffect, useState } from 'react';
+import ForteTable from '../../../src';
 
 import '../resources/api-example.css';
 
@@ -7,87 +7,51 @@ const URL = 'https://api.punkapi.com/v2/beers?page=2&per_page=80';
 const LOADER =
   'https://freeiconshop.com/wp-content/uploads/edd/beer-outline-filled.png';
 
-export default class APIExample extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      test: 'test',
-      data: null,
-    };
-
-    this.getData = this.getData.bind(this);
-    this.renderCell = this.renderCell.bind(this);
+function renderCell(c, r) {
+  if (c === 'image_url') {
+    return <img style={{ width: '50px' }} src={r[c]} alt={r.name} />;
   }
-
-  /**
-   * When the component mounts, fetch the data with getData()
-   * and set the state.
-   */
-  componentDidMount() {
-    this.getData(URL);
-  }
-
-  /**
-   * Fetch data from a given URL
-   * @param {String} url The API url to fetch data
-   */
-  getData(url) {
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        // Set a timeout to simulate a slow request
-        setTimeout(() => {
-          this.setState({ data: data });
-        }, 1500);
-      });
-  }
-
-  renderCell(c, r) {
-    // Render an image if the columns is 'image_url'
-    if (c === 'image_url') {
-      return <img style={{ width: '50px' }} src={r[c]} />;
-    }
-    // Render a list of ingredients if the column is 'ingredients'
-    else if (c === 'ingredients') {
-      let ingredients = r[c]['malt'].map((ingredient, i) => {
-        return <li key={i}>{ingredient.name}</li>;
-      });
-
-      return <ul>{ingredients}</ul>;
-    }
-    // Render the content of the cell as default case
-    return r[c];
-  }
-
-  render() {
+  if (c === 'ingredients') {
     return (
-      <div>
-        <h3 style={{ textAlign: 'left' }}>Fetch a list of beers from an API</h3>
-        <div>
-          {!this.state.data && <img className='rotating-beer' src={LOADER} />}
-        </div>
-        <div>
-          {this.state.data && (
-            <ForteTable
-              rows={() => this.state.data}
-              columns={() => [
-                'id',
-                'name',
-                'tagline',
-                'image_url',
-                'ingredients',
-              ]}
-              cellRender={this.renderCell}
-              defaultColumnWidth='auto'
-              headRowRender={() => (
-                // Return an empty span to remove the active row selection
-                <span />
-              )}
-            />
-          )}
-        </div>
-      </div>
+      <ul>
+        {r[c].malt.map((ingredient, i) => (
+          <li key={i}>{ingredient.name}</li>
+        ))}
+      </ul>
     );
   }
+  return r[c];
+}
+
+export default function APIExample() {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(URL, { signal: controller.signal })
+      .then(response => response.json())
+      .then(setData)
+      .catch(e => e.name !== 'AbortError' && setError(e.message));
+    return () => controller.abort();
+  }, []);
+
+  return (
+    <div>
+      <h3 style={{ textAlign: 'left' }}>Fetch a list of beers from an API</h3>
+      {error && <div>Error: {error}</div>}
+      {!data && !error && (
+        <img className='rotating-beer' src={LOADER} alt='loading' />
+      )}
+      {data && (
+        <ForteTable
+          rows={() => data}
+          columns={() => ['id', 'name', 'tagline', 'image_url', 'ingredients']}
+          cellRender={renderCell}
+          defaultColumnWidth='auto'
+          headRowRender={() => <span />}
+        />
+      )}
+    </div>
+  );
 }
